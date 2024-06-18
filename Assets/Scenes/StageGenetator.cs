@@ -58,7 +58,6 @@ public class StageGenerator : MonoBehaviour
         mesh.vertices = centeredVertices;
         mesh.RecalculateBounds();
 
-
         // MeshFilterとMeshRendererを追加
         MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
@@ -76,6 +75,16 @@ public class StageGenerator : MonoBehaviour
             Debug.LogWarning("Stage material is not set.");
             meshRenderer.material = new Material(Shader.Find("Standard"));
         }
+
+        // PolygonCollider2Dを追加
+        PolygonCollider2D polygonCollider = gameObject.AddComponent<PolygonCollider2D>();
+        Vector2[] colliderPoints = new Vector2[centeredVertices.Length];
+
+        for (int i = 0; i < centeredVertices.Length; i++)
+        {
+            colliderPoints[i] = new Vector2(centeredVertices[i].x, centeredVertices[i].y);
+        }
+        polygonCollider.points = colliderPoints;
     }
 
     float CalculateStageCenterX(Vector3[] vertices, float overlapFactor)
