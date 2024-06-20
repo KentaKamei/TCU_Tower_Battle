@@ -19,9 +19,16 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) // 左クリックが押されたとき
+        if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
         {
             currentPiece.DropPiece();
+        }
+
+        if (currentPiece != null && !currentPiece.IsClicked)
+        {
+            // キーボード入力で左右に移動
+            float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
+            currentPiece.transform.Translate(move, 0, 0);
         }
     }
 

@@ -14,18 +14,13 @@ public class PieceController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0; // 最初は重力を無効にする
+        rb.velocity = Vector2.zero; // 初期速度をゼロに設定
         gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
     {
-        if (!isClicked)
-        {
-            // キーボード入力で左右に移動
-            float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
-            transform.Translate(move, 0, 0);
-        }
-        else
+        if (isClicked)
         {
             // 速度が一定以下かどうかをチェック
             if (rb.velocity.magnitude < 0.1f)
@@ -45,6 +40,11 @@ public class PieceController : MonoBehaviour
         }
     }
 
+    public bool IsClicked
+    {
+        get { return isClicked; }
+    }
+
     public void DropPiece()
     {
         if (!isClicked)
@@ -53,6 +53,4 @@ public class PieceController : MonoBehaviour
             isClicked = true;
         }
     }
-
-
 }
