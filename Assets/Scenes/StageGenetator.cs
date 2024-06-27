@@ -10,7 +10,7 @@ public class StageGenerator : MonoBehaviour
     public float baseY = 0.0f; // 三角形の底辺のy座標
     public float overlapFactor = 0.2f; // 重なりの度合い
     public Material stageMaterial; // ステージ用のマテリアル
-
+    
     void Start()
     {
         // アンチエイリアシングを4xに設定

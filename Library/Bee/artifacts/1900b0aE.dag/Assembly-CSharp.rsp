@@ -375,6 +375,7 @@
 "Assets/Scenes/GameManager.cs"
 "Assets/Scenes/piececontroller.cs"
 "Assets/Scenes/StageGenetator.cs"
+"Assets/Scenes/TitleSceneManager.cs"
 -langversion:9.0
 /deterministic
 /optimize+

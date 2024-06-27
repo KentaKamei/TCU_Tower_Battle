@@ -9,7 +9,7 @@ public class PieceController : MonoBehaviour
     private float stationaryTime = 0.0f;
     private float stationaryThreshold = 1.0f; // 速度が一定以下になる時間
     private GameManager gameManager;
-
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -49,7 +49,7 @@ public class PieceController : MonoBehaviour
     {
         if (!isClicked)
         {
-            rb.gravityScale = 1; // ピースを落下させる
+            rb.gravityScale = 0.5f; // ピースを落下させる
             isClicked = true;
         }
     }
