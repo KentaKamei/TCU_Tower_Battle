@@ -7,7 +7,7 @@ public class PieceController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isClicked = false;
     private float stationaryTime = 0.0f;
-    private float stationaryThreshold = 1.0f; // 速度が一定以下になる時間
+    private float stationaryThreshold = 2.0f; // 速度が一定以下になる時間
     private GameManager gameManager;
     
     void Start()
@@ -23,7 +23,7 @@ public class PieceController : MonoBehaviour
         if (isClicked)
         {
             // 速度が一定以下かどうかをチェック
-            if (rb.velocity.magnitude < 0.1f)
+            if (rb.velocity.magnitude < 0.00001f)
             {
                 stationaryTime += Time.deltaTime;
                 if (stationaryTime >= stationaryThreshold)
