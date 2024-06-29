@@ -37,6 +37,12 @@ public class PieceController : MonoBehaviour
             {
                 stationaryTime = 0.0f; // 動いている間はリセット
             }
+
+            // ピースが画面外に落下したかどうかをチェック
+            if (transform.position.y < -5.0f) // 必要に応じて適切な値に変更
+            {
+                gameManager.GameOver();
+            }
         }
     }
 
