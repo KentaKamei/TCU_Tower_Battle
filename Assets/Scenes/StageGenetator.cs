@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class StageGenerator : MonoBehaviour
 {
@@ -75,6 +76,11 @@ public class StageGenerator : MonoBehaviour
             Debug.LogWarning("Stage material is not set.");
             meshRenderer.material = new Material(Shader.Find("Standard"));
         }
+
+        // SortingGroupを追加して設定
+        SortingGroup sortingGroup = gameObject.AddComponent<SortingGroup>();
+        sortingGroup.sortingLayerName = "game Layer 1"; // 適切なSorting Layerに設定
+        sortingGroup.sortingOrder = 1; // Order in Layerを1に設定
 
         // PolygonCollider2Dを追加
         PolygonCollider2D polygonCollider = gameObject.AddComponent<PolygonCollider2D>();
