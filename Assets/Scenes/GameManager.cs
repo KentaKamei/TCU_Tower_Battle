@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,8 +11,14 @@ public class GameManager : MonoBehaviour
     private PieceController currentPiece;
     public Button retry; // ゲームオーバーUIのリトライボタン
     public Button title; // ゲームオーバーUIのタイトルボタン
+    public Button rotateButton; // ピースを回転させるボタン
     public TextMeshProUGUI gameover; // ゲームオーバーUIのテキスト
     private List<GameObject> allPieces; // すべてのピースを管理するリスト
+    public float rotationAngle = 30f; // 一度のクリックで回転する角度
+
+    private GraphicRaycaster raycaster;
+    private PointerEventData pointerEventData;
+    private EventSystem eventSystem;
 
     void Start()
     {
@@ -29,13 +36,25 @@ public class GameManager : MonoBehaviour
         retry.gameObject.SetActive(false);
         title.gameObject.SetActive(false);
         gameover.gameObject.SetActive(false);
+
+        // 回転ボタンのクリックイベントを設定
+        rotateButton.onClick.AddListener(RotatePiece);
+
+        // 必要なコンポーネントを取得
+        raycaster = FindObjectOfType<GraphicRaycaster>();
+        eventSystem = FindObjectOfType<EventSystem>();
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
         {
-            currentPiece.DropPiece();
+            // 回転ボタン以外のところでクリックされたかチェック
+            if (!IsPointerOverUIElement(rotateButton.gameObject))
+            {
+                currentPiece.DropPiece();
+                rotateButton.interactable = false;
+            }
         }
 
         if (currentPiece != null && !currentPiece.IsClicked)
@@ -63,6 +82,9 @@ public class GameManager : MonoBehaviour
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
         currentPiece = piece.GetComponent<PieceController>();
 
+        // 回転ボタンを有効化
+        rotateButton.interactable = true;
+
         // 新しいピースをリストに追加
         allPieces.Add(piece);
     }
@@ -80,6 +102,9 @@ public class GameManager : MonoBehaviour
         {
             currentPiece.enabled = false;
         }
+
+        // 回転ボタンを無効化
+        rotateButton.interactable = false;
     }
 
     public void Retry()
@@ -98,11 +123,40 @@ public class GameManager : MonoBehaviour
 
         // 新しいピースを生成する
         SpawnPiece();
+
+        // 回転ボタンを有効化
+        rotateButton.interactable = true;
     }
 
     public void BackToTitle()
     {
         // タイトル画面に戻る（"TitleScene"という名前のシーンに切り替え）
         SceneManager.LoadScene("TitleScene");
+    }
+
+    public void RotatePiece()
+    {
+        if (currentPiece != null && currentPiece.enabled)
+        {
+            currentPiece.transform.Rotate(0, 0, rotationAngle);
+        }
+    }
+
+    private bool IsPointerOverUIElement(GameObject uiElement)
+    {
+        pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        raycaster.Raycast(pointerEventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject == uiElement)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

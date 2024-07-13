@@ -8,7 +8,7 @@ public class StageGenerator : MonoBehaviour
     public float maxWidth = 1.0f;
     public float minHeight = 0.5f;
     public float maxHeight = 1.5f;
-    public float baseY = 0.0f; // 三角形の底辺のy座標
+    public float baseY = -2.0f; // 三角形の底辺のy座標
     public float overlapFactor = 0.2f; // 重なりの度合い
     public Material stageMaterial; // ステージ用のマテリアル
     
@@ -28,7 +28,7 @@ public class StageGenerator : MonoBehaviour
         int[] triangles = new int[triangleCount * 3];
 
         // 初期X座標を計算して調整
-        float currentX = -1.62f;
+        float currentX = -0.75f;
 
         for (int i = 0; i < triangleCount; i++)
         {
@@ -76,11 +76,6 @@ public class StageGenerator : MonoBehaviour
             Debug.LogWarning("Stage material is not set.");
             meshRenderer.material = new Material(Shader.Find("Standard"));
         }
-
-        // SortingGroupを追加して設定
-        SortingGroup sortingGroup = gameObject.AddComponent<SortingGroup>();
-        sortingGroup.sortingLayerName = "game Layer 1"; // 適切なSorting Layerに設定
-        sortingGroup.sortingOrder = 1; // Order in Layerを1に設定
 
         // PolygonCollider2Dを追加
         PolygonCollider2D polygonCollider = gameObject.AddComponent<PolygonCollider2D>();

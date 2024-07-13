@@ -47,3 +47,6 @@ TagManager:
   - name: game Layer 1
     uniqueID: 1541667357
     locked: 0
+  - name: UI Layer
+    uniqueID: 4066753633
+    locked: 0
