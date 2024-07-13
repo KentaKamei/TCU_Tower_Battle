@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
         {
             // キーボード入力で左右に移動
             float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
-            currentPiece.transform.Translate(move, 0, 0);
+            currentPiece.transform.position += new Vector3(move, 0, 0);
         }
     }
 
