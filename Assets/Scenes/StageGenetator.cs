@@ -3,13 +3,13 @@ using UnityEngine.Rendering;
 
 public class StageGenerator : MonoBehaviour
 {
-    public int minTriangles = 5;
-    public int maxTriangles = 10;
-    public float maxWidth = 1.0f;
+    public int minTriangles = 7;
+    public int maxTriangles = 11;
+    public float maxWidth = 1.3f;
     public float minHeight = 0.5f;
-    public float maxHeight = 1.5f;
-    public float baseY = -2.0f; // 三角形の底辺のy座標
-    public float overlapFactor = 0.2f; // 重なりの度合い
+    public float maxHeight = 0.7f;
+    public float baseY = -6.0f; // 三角形の底辺のy座標
+    public float overlapFactor = 0.3f; // 重なりの度合い
     public Material stageMaterial; // ステージ用のマテリアル
     
     void Start()
@@ -112,7 +112,7 @@ public class StageGenerator : MonoBehaviour
         Vector3[] offsetVertices = new Vector3[vertices.Length];
         for (int i = 0; i < vertices.Length; i++)
         {
-            offsetVertices[i] = new Vector3(vertices[i].x - offsetX, vertices[i].y, vertices[i].z);
+            offsetVertices[i] = new Vector3(vertices[i].x - offsetX, vertices[i].y, 0); // Z軸を0に設定
         }
         return offsetVertices;
     }
