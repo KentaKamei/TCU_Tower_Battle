@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public Button title; // ゲームオーバーUIのタイトルボタン
     public Button rotateButton; // ピースを回転させるボタン
     public TextMeshProUGUI gameover; // ゲームオーバーUIのテキスト
-    private List<GameObject> allPieces; // すべてのピースを管理するリスト
+    private List<PieceController> allPieces; // すべてのピースを管理するリスト
     public float rotationAngle = 30f; // 一度のクリックで回転する角度
 
     private GraphicRaycaster raycaster;
@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        allPieces = new List<GameObject>(); // リストを初期化
+        allPieces = new List<PieceController>(); // リストを初期化
 
         if (TCUPrefabs == null || TCUPrefabs.Count == 0)
         {
@@ -65,6 +65,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void NotifyPieceFell()
+    {
+        GameOver();
+    }
+
     public void SpawnPiece()
     {
         if (TCUPrefabs == null || TCUPrefabs.Count == 0)
@@ -82,11 +87,11 @@ public class GameManager : MonoBehaviour
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
         currentPiece = piece.GetComponent<PieceController>();
 
+        // 新しいピースをリストに追加
+        allPieces.Add(currentPiece);
+
         // 回転ボタンを有効化
         rotateButton.interactable = true;
-
-        // 新しいピースをリストに追加
-        allPieces.Add(piece);
     }
 
     public void GameOver()
@@ -97,10 +102,9 @@ public class GameManager : MonoBehaviour
         gameover.gameObject.SetActive(true);
 
         // ゲームの状態を停止またはリセットする処理を追加
-        // 例えば、すべてのピースの動きを停止させるなど
-        if (currentPiece != null)
+        foreach (var piece in allPieces)
         {
-            currentPiece.enabled = false;
+            piece.enabled = false;
         }
 
         // 回転ボタンを無効化
@@ -115,9 +119,9 @@ public class GameManager : MonoBehaviour
         gameover.gameObject.SetActive(false);
 
         // すべてのピースを削除
-        foreach (GameObject piece in allPieces)
+        foreach (PieceController piece in allPieces)
         {
-            Destroy(piece);
+            Destroy(piece.gameObject);
         }
         allPieces.Clear(); // リストをクリア
 
