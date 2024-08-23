@@ -13,12 +13,15 @@ public class GameManager : MonoBehaviour
     public Button title; // ゲームオーバーUIのタイトルボタン
     public Button rotateButton; // ピースを回転させるボタン
     public TextMeshProUGUI gameover; // ゲームオーバーUIのテキスト
+    public TextMeshProUGUI MyTurn; // 自分のターンのテキスト
+    public TextMeshProUGUI AITurn; // AIのターンのテキスト
     private List<PieceController> allPieces; // すべてのピースを管理するリスト
     public float rotationAngle = 30f; // 一度のクリックで回転する角度
 
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
+    private bool isPlayerTurn = false;
 
     void Start()
     {
@@ -36,7 +39,9 @@ public class GameManager : MonoBehaviour
         retry.gameObject.SetActive(false);
         title.gameObject.SetActive(false);
         gameover.gameObject.SetActive(false);
-
+        MyTurn.gameObject.SetActive(false);
+        AITurn.gameObject.SetActive(false);
+        
         // 回転ボタンのクリックイベントを設定
         rotateButton.onClick.AddListener(RotatePiece);
 
@@ -47,21 +52,47 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
+        if (isPlayerTurn)
         {
-            // 回転ボタン以外のところでクリックされたかチェック
-            if (!IsPointerOverUIElement(rotateButton.gameObject))
+            MyTurn.gameObject.SetActive(true);
+            AITurn.gameObject.SetActive(false);
+            if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
             {
-                currentPiece.DropPiece();
-                rotateButton.interactable = false;
+                // 回転ボタン以外のところでクリックされたかチェック
+                if (!IsPointerOverUIElement(rotateButton.gameObject))
+                {
+                    currentPiece.DropPiece();
+                    rotateButton.interactable = false;
+                }
+            }
+
+            if (currentPiece != null && !currentPiece.IsClicked)
+            {
+                // キーボード入力で左右に移動
+                float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
+                currentPiece.transform.position += new Vector3(move, 0, 0);
             }
         }
-
-        if (currentPiece != null && !currentPiece.IsClicked)
+        else
         {
-            // キーボード入力で左右に移動
-            float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
-            currentPiece.transform.position += new Vector3(move, 0, 0);
+            MyTurn.gameObject.SetActive(false);
+            AITurn.gameObject.SetActive(true);
+            if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
+            {
+                // 回転ボタン以外のところでクリックされたかチェック
+                if (!IsPointerOverUIElement(rotateButton.gameObject))
+                {
+                    currentPiece.DropPiece();
+                    rotateButton.interactable = false;
+                }
+            }
+
+            if (currentPiece != null && !currentPiece.IsClicked)
+            {
+                // キーボード入力で左右に移動
+                float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
+                currentPiece.transform.position += new Vector3(move, 0, 0);
+            }
         }
     }
 
@@ -92,6 +123,7 @@ public class GameManager : MonoBehaviour
 
         // 回転ボタンを有効化
         rotateButton.interactable = true;
+        isPlayerTurn = !isPlayerTurn;
     }
 
     public void GameOver()
