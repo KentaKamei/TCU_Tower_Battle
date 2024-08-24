@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scenes\piececontroller.cs" />
     <Compile Include="Assets\Scenes\TitleSceneManager.cs" />
     <Compile Include="Assets\Scenes\GameManager.cs" />
+    <Compile Include="Assets\Scenes\TowerAgent.cs" />
     <Compile Include="Assets\Scenes\TitleManager.cs" />
     <Compile Include="Assets\Scenes\StageGenetator.cs" />
   </ItemGroup>

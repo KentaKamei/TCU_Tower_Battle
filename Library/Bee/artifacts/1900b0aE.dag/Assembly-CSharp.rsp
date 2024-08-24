@@ -391,6 +391,7 @@
 "Assets/Scenes/StageGenetator.cs"
 "Assets/Scenes/TitleManager.cs"
 "Assets/Scenes/TitleSceneManager.cs"
+"Assets/Scenes/TowerAgent.cs"
 -langversion:9.0
 /deterministic
 /optimize+
