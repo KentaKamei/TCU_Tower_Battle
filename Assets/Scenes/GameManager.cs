@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameover; // ゲームオーバーUIのテキスト
     public TextMeshProUGUI MyTurn; // 自分のターンのテキスト
     public TextMeshProUGUI AITurn; // AIのターンのテキスト
-    private List<PieceController> allPieces; // すべてのピースを管理するリスト
+    public List<PieceController> allPieces; // すべてのピースを管理するリスト
     public float rotationAngle = 30f; // 一度のクリックで回転する角度
 
     private GraphicRaycaster raycaster;

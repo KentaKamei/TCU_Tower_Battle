@@ -7,7 +7,7 @@ public class TowerAgent : Agent
 {
     public PieceController currentPiece; // 現在のピース
     public GameManager gameManager; // ゲームマネージャーの参照
-    public StageGenerator stageGenerator// stagegeneratorの参照
+    public StageGenerator stageGenerator;// stagegeneratorの参照
 
     public override void OnEpisodeBegin()
     {
@@ -57,20 +57,21 @@ public class TowerAgent : Agent
     private void ResetGame()
     {
         // ゲーム開始時のリセット処理
-        currentPiece.position = new Vector3(0, 5, 0); // 初期位置
-        currentPiece.rotation = Quaternion.identity; // 初期回転
+        currentPiece.transform.position = new Vector3(0, 5, 0); // 初期位置
+        currentPiece.transform.rotation = Quaternion.identity;  // 初期回転
     }
 
     private void MovePiece(float moveX)
     {
         // ピースを左右に移動する処理
-        currentPiece.position += new Vector3(moveX, 0, 0);
+        currentPiece.transform.position += new Vector3(moveX, 0, 0);
     }
 
     private void RotatePiece(float rotationZ)
     {
         // ピースを回転させる処理
-        currentPiece.Rotate(new Vector3(0, 0, rotationZ));
+        currentPiece.transform.Rotate(new Vector3(0, 0, rotationZ));
+
     }
 
 
