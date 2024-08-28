@@ -44,6 +44,28 @@ public class TowerAgent : Agent
         // ピースを移動および回転させる処理
         MovePiece(moveX);
         RotatePiece(rotationZ);
+
+        // ピースを落下させる
+        currentPiece.DropPiece();
+
+        // すべてのピースをチェック
+        foreach (var piece in gameManager.allPieces)
+        {
+            PieceController pieceController = piece.GetComponent<PieceController>();
+            if (pieceController.HasFallen())
+            {
+                Debug.Log("ピースが落下しました。エピソード終了。");
+                AddReward(-5.0f); // ペナルティ
+                EndEpisode(); // エピソード終了
+                return;
+            }
+        }
+        Debug.Log("エピソード継続中。報酬を追加。");
+        AddReward(0.5f); // ピースがまだ落ちていないなら報酬
+
+        float towerHeight = CalculateTowerHeight();
+        AddReward(towerHeight * 0.05f);
+
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -54,12 +76,20 @@ public class TowerAgent : Agent
         continuousActionsOut[1] = Input.GetAxis("Vertical");
     }
 
-    private void ResetGame()
+private void ResetGame()
+{
+    // すべてのピースを削除
+    foreach (PieceController piece in gameManager.allPieces)
     {
-        // ゲーム開始時のリセット処理
-        currentPiece.transform.position = new Vector3(0, 5, 0); // 初期位置
-        currentPiece.transform.rotation = Quaternion.identity;  // 初期回転
+        Destroy(piece.gameObject);
     }
+    gameManager.allPieces.Clear(); // リストをクリア
+
+    // 新しいピースを生成する
+    gameManager.SpawnPiece();
+    gameManager.isPlayerTurn = true;
+
+}
 
     private void MovePiece(float moveX)
     {
@@ -92,4 +122,17 @@ public class TowerAgent : Agent
 
         return heightMap;
     }
+    private float CalculateTowerHeight()
+    {
+        float maxHeight = 0f;
+        foreach (var piece in gameManager.allPieces)
+        {
+            if (piece.transform.position.y > maxHeight)
+            {
+                maxHeight = piece.transform.position.y;
+            }
+        }
+        return maxHeight;
+    }
+
 }

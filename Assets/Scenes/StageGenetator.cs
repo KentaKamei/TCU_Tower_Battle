@@ -19,7 +19,7 @@ public class StageGenerator : MonoBehaviour
         GenerateStage();
     }
 
-    void GenerateStage()
+    public void GenerateStage()
     {
         Mesh mesh = new Mesh();
 

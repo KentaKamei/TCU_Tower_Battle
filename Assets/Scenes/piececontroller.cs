@@ -41,7 +41,7 @@ public class PieceController : MonoBehaviour
         if (transform.position.y < -8.0f && !hasFallen) // 必要に応じて適切な値に変更
         {
             hasFallen = true;
-            gameManager.NotifyPieceFell(); // 落下を通知
+            gameManager.GameOver(); // 落下を通知
         }
     }
 

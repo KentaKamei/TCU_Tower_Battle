@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
-    private bool isPlayerTurn = false;
+    public bool isPlayerTurn = false;
 
     void Start()
     {
@@ -96,10 +96,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void NotifyPieceFell()
-    {
-        GameOver();
-    }
 
     public void SpawnPiece()
     {
@@ -159,6 +155,7 @@ public class GameManager : MonoBehaviour
 
         // 新しいピースを生成する
         SpawnPiece();
+        isPlayerTurn = true;
 
         // 回転ボタンを有効化
         rotateButton.interactable = true;

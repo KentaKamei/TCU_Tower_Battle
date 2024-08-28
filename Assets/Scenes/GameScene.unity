@@ -1802,13 +1802,16 @@ MonoBehaviour:
   - {fileID: 6635468811949191116, guid: 90ba35dcd6c9ec5448da80019e5feb4b, type: 3}
   - {fileID: 7012088476509720838, guid: b1aebbf6b6583cd46aece05908f75b39, type: 3}
   - {fileID: 599248562396838200, guid: 0c7e41ff4c7f2fe4e894002087ec5ec9, type: 3}
+  stageGenerator: {fileID: 418725248}
   retry: {fileID: 368066810}
   title: {fileID: 1327633670}
   rotateButton: {fileID: 542563951}
   gameover: {fileID: 582325252}
   MyTurn: {fileID: 1927837030}
   AITurn: {fileID: 1469047763}
+  allPieces: []
   rotationAngle: 30
+  isPlayerTurn: 0
 --- !u!4 &2124257786
 Transform:
   m_ObjectHideFlags: 0
