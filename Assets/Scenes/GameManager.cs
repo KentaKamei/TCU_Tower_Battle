@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     public List<GameObject> TCUPrefabs; // 動物ピースのプレハブをリストで管理
     private PieceController currentPiece;
+    public StageGenerator stageGenerator;// stagegeneratorの参照
     public Button retry; // ゲームオーバーUIのリトライボタン
     public Button title; // ゲームオーバーUIのタイトルボタン
     public Button rotateButton; // ピースを回転させるボタン
@@ -16,7 +17,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI MyTurn; // 自分のターンのテキスト
     public TextMeshProUGUI AITurn; // AIのターンのテキスト
     public List<PieceController> allPieces; // すべてのピースを管理するリスト
-    public float rotationAngle = 30f; // 一度のクリックで回転する角度
+    public float rotationAngle = 10f; // 一度のクリックで回転する角度
 
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         allPieces = new List<PieceController>(); // リストを初期化
+        stageGenerator = FindObjectOfType<StageGenerator>();
 
         if (TCUPrefabs == null || TCUPrefabs.Count == 0)
         {
@@ -152,6 +154,16 @@ public class GameManager : MonoBehaviour
             Destroy(piece.gameObject);
         }
         allPieces.Clear(); // リストをクリア
+
+        // ステージを再生成
+        if (stageGenerator != null)
+        {
+           stageGenerator.GenerateStage();
+        }
+        else
+        {
+            Debug.LogError("StageGenerator is null!");
+        }
 
         // 新しいピースを生成する
         SpawnPiece();

@@ -1810,7 +1810,7 @@ MonoBehaviour:
   MyTurn: {fileID: 1927837030}
   AITurn: {fileID: 1469047763}
   allPieces: []
-  rotationAngle: 30
+  rotationAngle: 15
   isPlayerTurn: 0
 --- !u!4 &2124257786
 Transform:
