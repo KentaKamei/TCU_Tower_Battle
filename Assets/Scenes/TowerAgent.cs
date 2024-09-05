@@ -71,7 +71,7 @@ public class TowerAgent : Agent
         Debug.Log("エピソード継続中。報酬を追加。");
         AddReward(0.5f); // ピースがまだ落ちていないなら報酬
 
-        float towerHeight = CalculateTowerHeight();
+        float towerHeight = gameManager.CalculateTowerHeight();
         AddReward(towerHeight * 0.05f);
 
     }
@@ -140,42 +140,30 @@ private void ResetGame()
 
         return heightMap;
     }
-    private float CalculateTowerHeight()
-    {
-        float maxHeight = 0f;
-        foreach (var piece in gameManager.allPieces)
-        {
-            if (piece.transform.position.y > maxHeight)
-            {
-                maxHeight = piece.transform.position.y;
-            }
-        }
-        return maxHeight;
-    }
     private float[] CalculateStageShape()
-{
-    // stageGeneratorの参照があることを確認
-    if (stageGenerator == null)
     {
-        Debug.LogError("StageGenerator is null!");
-        return new float[0]; // 空の配列を返す
-    }
+        // stageGeneratorの参照があることを確認
+        if (stageGenerator == null)
+        {
+            Debug.LogError("StageGenerator is null!");
+            return new float[0]; // 空の配列を返す
+        }
 
-    // StageGeneratorオブジェクトからMeshFilterを取得
-    Mesh mesh = stageGenerator.GetComponent<MeshFilter>().mesh;
-    
-    // メッシュの頂点を取得
-    Vector3[] vertices = mesh.vertices;
+        // StageGeneratorオブジェクトからMeshFilterを取得
+        Mesh mesh = stageGenerator.GetComponent<MeshFilter>().mesh;
+        
+        // メッシュの頂点を取得
+        Vector3[] vertices = mesh.vertices;
 
-    // 頂点のY座標を高さ情報として取得
-    float[] stageShape = new float[vertices.Length];
-    for (int i = 0; i < vertices.Length; i++)
-    {
-        stageShape[i] = vertices[i].y; // Y軸方向の高さを観測
-    }
+        // 頂点のY座標を高さ情報として取得
+        float[] stageShape = new float[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            stageShape[i] = vertices[i].y; // Y軸方向の高さを観測
+        }
 
     return stageShape;
-}
+    }
 
 
 }
