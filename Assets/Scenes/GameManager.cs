@@ -171,6 +171,12 @@ public class GameManager : MonoBehaviour
         }
         allPieces.Clear(); // リストをクリア
 
+        // yOffsetを元の値に戻す
+        yOffset = 3.5f;
+
+        // カメラの位置を初期位置に戻す
+        mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, 0, mainCamera.transform.position.z);
+
         // ステージを再生成
         if (stageGenerator != null)
         {
