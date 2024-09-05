@@ -1812,6 +1812,8 @@ MonoBehaviour:
   allPieces: []
   rotationAngle: 15
   isPlayerTurn: 0
+  yOffset: 3.5
+  mainCamera: {fileID: 519420031}
 --- !u!4 &2124257786
 Transform:
   m_ObjectHideFlags: 0

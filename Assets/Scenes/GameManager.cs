@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private EventSystem eventSystem;
     public bool isPlayerTurn = false;
     public float yOffset = 3.5f;
+    public Camera mainCamera; // メインカメラの参照
 
     
     void Start()
@@ -115,9 +116,11 @@ public class GameManager : MonoBehaviour
 
         // タワーの高さを取得し、オフセットを追加
         float towerHeight = CalculateTowerHeight();
-        if (yOffset - towerHeight < 3.0f)
+        if (yOffset - towerHeight < 7.0f)
         {
             yOffset += 2.0f;
+            // カメラの位置も更新
+            mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y + 2.0f, mainCamera.transform.position.z);
         }
 
         Vector3 spawnPosition = new Vector3(0, yOffset, 0);
