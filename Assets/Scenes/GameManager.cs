@@ -76,6 +76,11 @@ public class GameManager : MonoBehaviour
                 // キーボード入力で左右に移動
                 float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
                 currentPiece.transform.position += new Vector3(move, 0, 0);
+                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+                if (scrollInput != 0f)
+                {
+                    mainCamera.transform.position += new Vector3(0, scrollInput * 5f, 0); // スクロール量に応じてカメラを移動
+                }
             }
         }
         else
@@ -97,6 +102,11 @@ public class GameManager : MonoBehaviour
                 // キーボード入力で左右に移動
                 float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
                 currentPiece.transform.position += new Vector3(move, 0, 0);
+                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+                if (scrollInput != 0f)
+                {
+                    mainCamera.transform.position += new Vector3(0, scrollInput * 5f, 0); // スクロール量に応じてカメラを移動
+                }
             }
         }
     }
@@ -116,7 +126,7 @@ public class GameManager : MonoBehaviour
 
         // タワーの高さを取得し、オフセットを追加
         float towerHeight = CalculateTowerHeight();
-        if (yOffset - towerHeight < 7.0f)
+        if (yOffset - towerHeight < 4.0f)
         {
             yOffset += 2.0f;
             // カメラの位置も更新
@@ -175,7 +185,7 @@ public class GameManager : MonoBehaviour
         yOffset = 3.5f;
 
         // カメラの位置を初期位置に戻す
-        mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, 0, mainCamera.transform.position.z);
+        mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, yOffset - 3.5f, mainCamera.transform.position.z);
 
         // ステージを再生成
         if (stageGenerator != null)
