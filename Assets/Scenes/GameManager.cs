@@ -23,7 +23,9 @@ public class GameManager : MonoBehaviour
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
     public bool isPlayerTurn = false;
+    public float yOffset = 3.5f;
 
+    
     void Start()
     {
         allPieces = new List<PieceController>(); // リストを初期化
@@ -111,8 +113,19 @@ public class GameManager : MonoBehaviour
         int randomIndex = Random.Range(0, TCUPrefabs.Count);
         GameObject selectedPrefab = TCUPrefabs[randomIndex];
 
-        // 指定した位置に生成
-        Vector3 spawnPosition = new Vector3(0, 3.5f, 0); // 位置を必要に応じて調整
+        // タワーの高さを取得し、オフセットを追加
+        float towerHeight = CalculateTowerHeight();
+        if (yOffset - towerHeight < 3.0f)
+        {
+            yOffset += 2.0f;
+        }
+
+        Vector3 spawnPosition = new Vector3(0, yOffset, 0);
+
+         // タワーの高さをデバッグ出力
+        Debug.Log("Tower Height: " + towerHeight);
+
+        // ピースを生成
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
         currentPiece = piece.GetComponent<PieceController>();
 
@@ -204,4 +217,17 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
+    public float CalculateTowerHeight()
+    {
+        float maxHeight = -6.0f;
+        foreach (var piece in allPieces)
+        {
+            if (piece.transform.position.y > maxHeight)
+            {
+                maxHeight = piece.transform.position.y;
+            }
+        }
+        return maxHeight;
+    }
+
 }
