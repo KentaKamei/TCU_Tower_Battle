@@ -33,6 +33,14 @@ public class TowerAgent : Agent
         {
             sensor.AddObservation(height);
         }
+
+        // ステージの形状も観測に追加
+        float[] stageShape = CalculateStageShape();
+        foreach (float shape in stageShape)
+        {
+            sensor.AddObservation(shape);
+        }
+
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -85,6 +93,16 @@ private void ResetGame()
     }
     gameManager.allPieces.Clear(); // リストをクリア
 
+
+    // ステージを再生成
+     if (stageGenerator != null)
+    {
+       stageGenerator.GenerateStage();
+    }
+    else
+    {
+        Debug.LogError("StageGenerator is null!");
+    }
     // 新しいピースを生成する
     gameManager.SpawnPiece();
     gameManager.isPlayerTurn = true;
@@ -134,5 +152,30 @@ private void ResetGame()
         }
         return maxHeight;
     }
+    private float[] CalculateStageShape()
+{
+    // stageGeneratorの参照があることを確認
+    if (stageGenerator == null)
+    {
+        Debug.LogError("StageGenerator is null!");
+        return new float[0]; // 空の配列を返す
+    }
+
+    // StageGeneratorオブジェクトからMeshFilterを取得
+    Mesh mesh = stageGenerator.GetComponent<MeshFilter>().mesh;
+    
+    // メッシュの頂点を取得
+    Vector3[] vertices = mesh.vertices;
+
+    // 頂点のY座標を高さ情報として取得
+    float[] stageShape = new float[vertices.Length];
+    for (int i = 0; i < vertices.Length; i++)
+    {
+        stageShape[i] = vertices[i].y; // Y軸方向の高さを観測
+    }
+
+    return stageShape;
+}
+
 
 }
