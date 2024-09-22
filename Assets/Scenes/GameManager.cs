@@ -5,10 +5,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
+public enum PieceType { Tcu1, Tcu2, Tcu3 }
+
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> TCUPrefabs; // 動物ピースのプレハブをリストで管理
-    private PieceController currentPiece;
+    public PieceController currentPiece;
     public StageGenerator stageGenerator;// stagegeneratorの参照
     public Button retry; // ゲームオーバーUIのリトライボタン
     public Button title; // ゲームオーバーUIのタイトルボタン
@@ -18,7 +20,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI AITurn; // AIのターンのテキスト
     public List<PieceController> allPieces; // すべてのピースを管理するリスト
     public float rotationAngle = 10f; // 一度のクリックで回転する角度
-
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
@@ -141,6 +142,20 @@ public class GameManager : MonoBehaviour
         // ピースを生成
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
         currentPiece = piece.GetComponent<PieceController>();
+
+        // プレハブのインデックスからピースの種類を設定
+        if (randomIndex == 0)
+        {
+            currentPiece.pieceType = PieceType.Tcu1;
+        }
+        else if (randomIndex == 1)
+        {
+            currentPiece.pieceType = PieceType.Tcu2;
+        }
+        else if (randomIndex == 2)
+        {
+            currentPiece.pieceType = PieceType.Tcu3;
+        }
 
         // 新しいピースをリストに追加
         allPieces.Add(currentPiece);

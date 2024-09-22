@@ -8,6 +8,8 @@ public class PieceController : MonoBehaviour
     private float stationaryThreshold = 1.25f; // 速度が一定以下になる時間
     private GameManager gameManager;
     private bool hasFallen = false; // 落下フラグを追加
+    public PieceType pieceType;
+
     
     void Start()
     {

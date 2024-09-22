@@ -11,6 +11,7 @@ public class StageGenerator : MonoBehaviour
     public float baseY = -6.0f; // 三角形の底辺のy座標
     public float overlapFactor = 0.3f; // 重なりの度合い
     public Material stageMaterial; // ステージ用のマテリアル
+    public float totalWidth; // ステージ全体の幅
     
     void Start()
     {
@@ -52,6 +53,9 @@ public class StageGenerator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
+
+        // メッシュの幅を計算して保存
+        totalWidth = Mathf.Abs(vertices[0].x - vertices[vertices.Length - 1].x); // ステージの幅を計算
 
         // ステージの中心を計算してオフセット
         float stageCenterX = CalculateStageCenterX(vertices, overlapFactor);
