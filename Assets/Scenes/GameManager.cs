@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using Unity.MLAgents; 
 
 public enum PieceType { Tcu1, Tcu2, Tcu3 }
 
@@ -26,12 +27,18 @@ public class GameManager : MonoBehaviour
     public bool isPlayerTurn = false;
     public float yOffset = 3.5f;
     public Camera mainCamera; // メインカメラの参照
+    public bool isTrainingMode = false; // トレーニングモードかどうかを判断するフラグ
+    public TowerAgent towerAgent; // TowerAgentの参照
 
     
     void Start()
     {
         allPieces = new List<PieceController>(); // リストを初期化
         stageGenerator = FindObjectOfType<StageGenerator>();
+        towerAgent = FindObjectOfType<TowerAgent>();
+
+        // ML-Agentsがトレーニング中かどうかを確認
+        isTrainingMode = Academy.Instance.IsCommunicatorOn;
 
         if (TCUPrefabs == null || TCUPrefabs.Count == 0)
         {
@@ -58,59 +65,89 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (isPlayerTurn)
+        // トレーニング時は両方AIが行動
+        if (isTrainingMode)
         {
-            MyTurn.gameObject.SetActive(true);
-            AITurn.gameObject.SetActive(false);
-            if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
-            {
-                // 回転ボタン以外のところでクリックされたかチェック
-                if (!IsPointerOverUIElement(rotateButton.gameObject))
-                {
-                    currentPiece.DropPiece();
-                    rotateButton.interactable = false;
-                }
-            }
-
-            if (currentPiece != null && !currentPiece.IsClicked)
-            {
-                // キーボード入力で左右に移動
-                float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
-                currentPiece.transform.position += new Vector3(move, 0, 0);
-                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-                if (scrollInput != 0f)
-                {
-                    mainCamera.transform.position += new Vector3(0, scrollInput * 5f, 0); // スクロール量に応じてカメラを移動
-                }
-            }
+            HandleAITurn();  // 両方のターンでAIが行動する
         }
         else
         {
-            MyTurn.gameObject.SetActive(false);
-            AITurn.gameObject.SetActive(true);
-            if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
+            if (isPlayerTurn)
             {
-                // 回転ボタン以外のところでクリックされたかチェック
-                if (!IsPointerOverUIElement(rotateButton.gameObject))
-                {
-                    currentPiece.DropPiece();
-                    rotateButton.interactable = false;
-                }
+                HandlePlayerTurn();  // プレイヤーのターン処理
             }
-
-            if (currentPiece != null && !currentPiece.IsClicked)
+            else
             {
-                // キーボード入力で左右に移動
-                float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
-                currentPiece.transform.position += new Vector3(move, 0, 0);
-                float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-                if (scrollInput != 0f)
-                {
-                    mainCamera.transform.position += new Vector3(0, scrollInput * 5f, 0); // スクロール量に応じてカメラを移動
-                }
+                HandleAITurn();  // AIのターン処理
             }
         }
     }
+
+
+    private void HandlePlayerTurn()
+    {
+        MyTurn.gameObject.SetActive(true);
+        AITurn.gameObject.SetActive(false);
+
+        if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
+        {
+            // 回転ボタン以外のところでクリックされたかチェック
+            if (!IsPointerOverUIElement(rotateButton.gameObject))
+            {
+                currentPiece.DropPiece();
+                rotateButton.interactable = false;
+            }
+        }
+
+        if (currentPiece != null && !currentPiece.IsClicked)
+        {
+            // キーボード入力で左右に移動
+            float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
+
+            // 現在のピース位置を取得
+            Vector3 newPosition = currentPiece.transform.position + new Vector3(move, 0, 0);
+
+            // カメラの右端と左端のワールド座標を取得
+            float leftBoundary = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).x; // 画面の左端
+            float rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, Camera.main.nearClipPlane)).x; // 画面の右端
+
+            // 新しい位置が画面内に収まるように制限
+            newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
+
+            // ピースを新しい位置に移動
+            currentPiece.transform.position = newPosition;
+
+            currentPiece.transform.position += new Vector3(move, 0, 0);
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+            if (scrollInput != 0f)
+            {
+                mainCamera.transform.position += new Vector3(0, scrollInput * 5f, 0); // スクロール量に応じてカメラを移動
+            }
+        }
+    }
+
+    // AIのターンの処理
+    private void HandleAITurn()
+    {
+        MyTurn.gameObject.SetActive(false);
+        AITurn.gameObject.SetActive(true);
+
+        // 現在のピースが存在し、まだ落下していない場合のみAIに行動をリクエスト
+        if (towerAgent != null && currentPiece != null && !currentPiece.IsClicked)
+        {
+            towerAgent.RequestDecision(); // AIに行動させる
+        }
+
+        // ピースが落下し、完全に静止した後に次のピースを生成する
+        if (currentPiece != null && currentPiece.IsClicked)
+        {
+            if (currentPiece.GetComponent<Rigidbody2D>().velocity.magnitude < 0.0001f)
+            {
+                currentPiece = null; // currentPieceをリセット
+                SpawnPiece(); // 新しいピースを生成
+            }
+        }
+}
 
 
     public void SpawnPiece()
