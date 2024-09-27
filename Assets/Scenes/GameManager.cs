@@ -173,8 +173,8 @@ public class GameManager : MonoBehaviour
 
         Vector3 spawnPosition = new Vector3(0, yOffset, 0);
 
-         // タワーの高さをデバッグ出力
-        Debug.Log("Tower Height: " + towerHeight);
+        // タワーの高さをデバッグ出力
+        //Debug.Log("Tower Height: " + towerHeight);
 
         // ピースを生成
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
@@ -197,6 +197,15 @@ public class GameManager : MonoBehaviour
         // 新しいピースをリストに追加
         allPieces.Add(currentPiece);
 
+         if (towerAgent != null)
+        {
+            towerAgent.currentPiece = currentPiece;
+            towerAgent.currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>();
+            towerAgent.currentPieceTransform = currentPiece.transform;
+            Debug.Log("TowerAgent's currentPiece updated to: " + currentPiece.name);
+        }
+
+
         // 回転ボタンを有効化
         rotateButton.interactable = true;
         isPlayerTurn = !isPlayerTurn;
@@ -217,6 +226,12 @@ public class GameManager : MonoBehaviour
 
         // 回転ボタンを無効化
         rotateButton.interactable = false;
+
+        // トレーニング中なら自動でリトライ
+        if (isTrainingMode)
+        {
+            Invoke("Retry", 1.0f); // 1秒後にリトライ（少し待つことで安定）
+        }
     }
 
     public void Retry()

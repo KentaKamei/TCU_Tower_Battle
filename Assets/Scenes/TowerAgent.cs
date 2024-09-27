@@ -8,11 +8,11 @@ public class TowerAgent : Agent
     public PieceController currentPiece; // 現在のピース
     public GameManager gameManager; // ゲームマネージャーの参照
     public StageGenerator stageGenerator;// stagegeneratorの参照
-    private Rigidbody2D currentPieceRigidbody;
+    public Rigidbody2D currentPieceRigidbody;
     private float[] cachedStageShape;
     private float noMovementTime = 0.0f; // ピースが動かなくなってからの経過時間
     private float noMovementThreshold = 1.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
-    private Transform currentPieceTransform; // Transformをキャッシュする変数
+    public Transform currentPieceTransform; // Transformをキャッシュする変数
     
 
     public override void OnEpisodeBegin()
