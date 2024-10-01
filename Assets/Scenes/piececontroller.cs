@@ -24,13 +24,16 @@ public class PieceController : MonoBehaviour
         if (isClicked)
         {
             // 速度が一定以下かどうかをチェック
-            if (rb.velocity.magnitude < 0.00001f)
+            if (rb.velocity.magnitude < 0.0001f)
             {
                 stationaryTime += Time.deltaTime;
                 if (stationaryTime >= stationaryThreshold)
                 {
                     // 一定時間静止したら次のピースを生成
-                    gameManager.SpawnPiece();
+                    if (gameManager != null && gameManager.currentPiece == this)
+                    {
+                        gameManager.SpawnPiece(); // 新しいピースを生成
+                    }
                     isClicked = false;
                 }
             }
@@ -39,8 +42,9 @@ public class PieceController : MonoBehaviour
                 stationaryTime = 0.0f; // 動いている間はリセット
             }
         }
+
         // ピースが画面外に落下したかどうかをチェック
-        if (transform.position.y < -8.0f && !hasFallen) // 必要に応じて適切な値に変更
+        if (transform.position.y < -8.0f && !hasFallen)
         {
             hasFallen = true;
             gameManager.GameOver(); // 落下を通知

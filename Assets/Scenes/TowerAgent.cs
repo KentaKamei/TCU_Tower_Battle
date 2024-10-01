@@ -8,11 +8,11 @@ public class TowerAgent : Agent
     public PieceController currentPiece; // 現在のピース
     public GameManager gameManager; // ゲームマネージャーの参照
     public StageGenerator stageGenerator;// stagegeneratorの参照
-    private Rigidbody2D currentPieceRigidbody;
+    public Rigidbody2D currentPieceRigidbody;
     private float[] cachedStageShape;
     private float noMovementTime = 0.0f; // ピースが動かなくなってからの経過時間
     private float noMovementThreshold = 1.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
-    private Transform currentPieceTransform; // Transformをキャッシュする変数
+    public Transform currentPieceTransform; // Transformをキャッシュする変数
     
 
     public override void OnEpisodeBegin()
@@ -50,51 +50,59 @@ public class TowerAgent : Agent
 
     }
 
-public override void OnActionReceived(ActionBuffers actions)
-{
-    // エージェントの行動を処理
-    float moveX = actions.ContinuousActions[0]; // ピースの移動
-    float rotationZ = actions.ContinuousActions[1]; // ピースの回転
-
-    // ピースを移動および回転させる処理
-    MovePiece(moveX);
-    RotatePiece(rotationZ);
-
-// 動かした後、ピースの速度と角速度を確認
-    if (currentPieceRigidbody.velocity.magnitude < 0.01f && Mathf.Abs(currentPieceRigidbody.angularVelocity) < 0.1f)
+    public override void OnActionReceived(ActionBuffers actions)
     {
-        noMovementTime += Time.deltaTime;
-        
-        // 一定時間が経過した場合にピースを落下させる
-        if (noMovementTime >= noMovementThreshold)
+
+        // すでにピースが落下していたら行動しない
+        if (currentPiece.IsClicked)
         {
-            currentPiece.DropPiece();
-        }
-    }
-    else
-    {
-        noMovementTime = 0.0f; // ピースが動いている間はリセット
-    }
-
-    // すべてのピースをチェック
-    foreach (var piece in gameManager.allPieces)
-    {
-        PieceController pieceController = piece.GetComponent<PieceController>();
-        if (pieceController.HasFallen())
-        {
-            Debug.Log("ピースが落下しました。エピソード終了。");
-            AddReward(-5.0f); // ペナルティ
-            EndEpisode(); // エピソード終了
             return;
         }
+
+        // エージェントの行動を処理
+        float moveX = actions.ContinuousActions[0]; // ピースの移動
+        float rotationZ = actions.ContinuousActions[1]; // ピースの回転
+
+        // ピースを移動および回転させる処理
+        MovePiece(moveX);
+        RotatePiece(rotationZ);
+
+        // 動かした後、ピースの速度と角速度を確認
+        if (currentPieceRigidbody.velocity.magnitude < 0.01f && Mathf.Abs(currentPieceRigidbody.angularVelocity) < 0.1f)
+        {
+            noMovementTime += Time.deltaTime;
+            
+            // 一定時間が経過した場合にピースを落下させる
+            if (noMovementTime >= noMovementThreshold)
+            {
+                currentPiece.DropPiece();
+                Debug.Log("ドロップピース");
+            }
+        }
+        else
+        {
+            noMovementTime = 0.0f; // ピースが動いている間はリセット
+        }
+
+        // すべてのピースをチェック
+        foreach (var piece in gameManager.allPieces)
+        {
+            PieceController pieceController = piece.GetComponent<PieceController>();
+            if (pieceController.HasFallen())
+            {
+                Debug.Log("ピースが落下しました。エピソード終了。");
+                AddReward(-5.0f); // ペナルティ
+                EndEpisode(); // エピソード終了
+                return;
+            }
+        }
+
+        Debug.Log("エピソード継続中。報酬を追加。");
+        AddReward(0.5f); // ピースがまだ落ちていないなら報酬
+
+        float towerHeight = gameManager.CalculateTowerHeight();
+        AddReward(towerHeight * 0.05f);
     }
-
-    Debug.Log("エピソード継続中。報酬を追加。");
-    AddReward(0.5f); // ピースがまだ落ちていないなら報酬
-
-    float towerHeight = gameManager.CalculateTowerHeight();
-    AddReward(towerHeight * 0.05f);
-}
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
@@ -104,37 +112,47 @@ public override void OnActionReceived(ActionBuffers actions)
         continuousActionsOut[1] = Input.GetAxis("Vertical");
     }
 
-private void ResetGame()
-{
-    // すべてのピースを削除
-    foreach (PieceController piece in gameManager.allPieces)
+    private void ResetGame()
     {
-        Destroy(piece.gameObject);
-    }
-    gameManager.allPieces.Clear(); // リストをクリア
+        // すべてのピースを削除
+        foreach (PieceController piece in gameManager.allPieces)
+        {
+            Destroy(piece.gameObject);
+        }
+        gameManager.allPieces.Clear(); // リストをクリア
 
 
-    // ステージを再生成
-     if (stageGenerator != null)
-    {
-       stageGenerator.GenerateStage();
-    }
-    else
-    {
-        Debug.LogError("StageGenerator is null!");
-    }
-    // 新しいピースを生成する
-    gameManager.SpawnPiece();
-    currentPiece = gameManager.currentPiece;
-    currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
-    gameManager.isPlayerTurn = true;
+        // ステージを再生成
+        if (stageGenerator != null)
+        {
+        stageGenerator.GenerateStage();
+        }
+        else
+        {
+            Debug.LogError("StageGenerator is null!");
+        }
+        // 新しいピースを生成する
+        gameManager.SpawnPiece();
+        currentPiece = gameManager.currentPiece;
+        currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
+        gameManager.isPlayerTurn = true;
 
-}
+    }
 
     private void MovePiece(float moveX)
     {
-        // ピースを左右に移動する処理
-        currentPieceTransform.position += new Vector3(moveX, 0, 0);
+        // 現在のピース位置を取得
+        Vector3 newPosition = currentPiece.transform.position + new Vector3(moveX, 0, 0);
+
+        // ステージの幅に基づく移動制限
+        float leftBoundary = -stageGenerator.totalWidth / 2;  // ステージの左端
+        float rightBoundary = stageGenerator.totalWidth / 2;  // ステージの右端
+
+        // 新しい位置がステージ内に収まるように制限
+        newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
+
+        // ピースを新しい位置に移動
+        currentPiece.transform.position = newPosition;
     }
 
     private void RotatePiece(float rotationZ)
