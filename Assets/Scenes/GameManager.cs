@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour
                 SpawnPiece(); // 新しいピースを生成
             }
         }
-}
+    }
 
 
     public void SpawnPiece()
