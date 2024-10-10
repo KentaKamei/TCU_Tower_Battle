@@ -206,9 +206,15 @@ public class GameManager : MonoBehaviour
         }
 
 
-        // 回転ボタンを有効化
-        rotateButton.interactable = true;
         isPlayerTurn = !isPlayerTurn;
+        if(isPlayerTurn)
+        {
+            // 回転ボタンを有効化
+            rotateButton.interactable = true;
+        }
+
+        //Debug.Log("isPlayerTurn: " + isPlayerTurn);
+
     }
 
     public void GameOver()
@@ -223,9 +229,6 @@ public class GameManager : MonoBehaviour
         {
             piece.enabled = false;
         }
-
-        // リストをクリアして、不要な参照を除去
-        allPieces.Clear();
 
         // 回転ボタンを無効化
         rotateButton.interactable = false;

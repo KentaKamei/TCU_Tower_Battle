@@ -76,7 +76,6 @@ public class StageGenerator : MonoBehaviour
         mesh.RecalculateBounds();
 
         // MeshFilterとMeshRendererを追加
-        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
         if (meshFilter == null)
         {
             meshFilter = gameObject.AddComponent<MeshFilter>();

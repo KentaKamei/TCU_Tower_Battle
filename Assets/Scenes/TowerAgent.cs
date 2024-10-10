@@ -77,7 +77,7 @@ public class TowerAgent : Agent
             if (noMovementTime >= noMovementThreshold)
             {
                 currentPiece.DropPiece();
-                Debug.Log("ドロップピース");
+                //Debug.Log("ドロップピース");
             }
         }
         else
@@ -91,14 +91,14 @@ public class TowerAgent : Agent
             PieceController pieceController = piece.GetComponent<PieceController>();
             if (pieceController.HasFallen())
             {
-                Debug.Log("ピースが落下しました。エピソード終了。");
+                //Debug.Log("ピースが落下しました。エピソード終了。");
                 AddReward(-5.0f); // ペナルティ
                 EndEpisode(); // エピソード終了
                 return;
             }
         }
 
-        Debug.Log("エピソード継続中。報酬を追加。");
+        //Debug.Log("エピソード継続中。報酬を追加。");
         AddReward(0.5f); // ピースがまだ落ちていないなら報酬
 
         float towerHeight = gameManager.CalculateTowerHeight();
@@ -108,9 +108,9 @@ public class TowerAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         // 手動での操作をデバッグ用に実装
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        continuousActionsOut[1] = Input.GetAxis("Vertical");
+        //var continuousActionsOut = actionsOut.ContinuousActions;
+        //continuousActionsOut[0] = Input.GetAxis("Horizontal");
+        //continuousActionsOut[1] = Input.GetAxis("Vertical");
     }
 
 
@@ -134,7 +134,7 @@ public class TowerAgent : Agent
         // ステージを再生成
         if (stageGenerator != null)
         {
-        stageGenerator.GenerateStage();
+            stageGenerator.GenerateStage();
         }
         else
         {
