@@ -22,6 +22,18 @@ public class StageGenerator : MonoBehaviour
 
     public void GenerateStage()
     {
+
+        // 既存のMeshFilterを取得し、古いメッシュを破棄
+        MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+        if (meshFilter == null)
+        {
+            meshFilter = gameObject.AddComponent<MeshFilter>();
+        }
+        else
+        {
+            Destroy(meshFilter.mesh);  // 古いメッシュを破棄
+        }
+
         Mesh mesh = new Mesh();
 
         int triangleCount = Random.Range(minTriangles, maxTriangles);
@@ -91,9 +103,14 @@ public class StageGenerator : MonoBehaviour
         }
 
         // PolygonCollider2Dを追加
-        PolygonCollider2D polygonCollider = gameObject.AddComponent<PolygonCollider2D>();
-        Vector2[] colliderPoints = new Vector2[centeredVertices.Length];
+        PolygonCollider2D polygonCollider = gameObject.GetComponent<PolygonCollider2D>();
+        if (polygonCollider != null)
+        {
+            Destroy(polygonCollider); // 古いコライダーを破棄
+        }
+        polygonCollider = gameObject.AddComponent<PolygonCollider2D>();
 
+        Vector2[] colliderPoints = new Vector2[centeredVertices.Length];
         for (int i = 0; i < centeredVertices.Length; i++)
         {
             colliderPoints[i] = new Vector2(centeredVertices[i].x, centeredVertices[i].y);

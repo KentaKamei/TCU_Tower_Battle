@@ -19,6 +19,7 @@ public class TowerAgent : Agent
     {
         // ゲームのリセット処理
         ResetGame();
+        ResetStageCache();  // キャッシュをクリア
         currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
         currentPieceTransform = currentPiece.transform; 
     }
@@ -112,12 +113,20 @@ public class TowerAgent : Agent
         continuousActionsOut[1] = Input.GetAxis("Vertical");
     }
 
+
+    // ステージが再生成されるたびにキャッシュをクリアする
+    private void ResetStageCache()
+    {
+        cachedStageShape = null;  // キャッシュをリセット
+    }
+
     private void ResetGame()
     {
         // すべてのピースを削除
         foreach (PieceController piece in gameManager.allPieces)
         {
             Destroy(piece.gameObject);
+            ResetStageCache();  // キャッシュをクリア
         }
         gameManager.allPieces.Clear(); // リストをクリア
 

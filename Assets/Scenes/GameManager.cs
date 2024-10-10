@@ -224,6 +224,9 @@ public class GameManager : MonoBehaviour
             piece.enabled = false;
         }
 
+        // リストをクリアして、不要な参照を除去
+        allPieces.Clear();
+
         // 回転ボタンを無効化
         rotateButton.interactable = false;
 
