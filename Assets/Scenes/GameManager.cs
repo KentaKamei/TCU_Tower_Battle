@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using Unity.MLAgents; 
 
-public enum PieceType { Tcu1, Tcu2, Tcu3 }
+public enum PieceType { Tcu1, Tcu2, Tcu3, Tcu4, Tcu5 }
 
 public class GameManager : MonoBehaviour
 {
@@ -192,6 +192,14 @@ public class GameManager : MonoBehaviour
         else if (randomIndex == 2)
         {
             currentPiece.pieceType = PieceType.Tcu3;
+        }
+        else if (randomIndex == 3)
+        {
+            currentPiece.pieceType = PieceType.Tcu4;
+        }
+        else if (randomIndex == 4)
+        {
+            currentPiece.pieceType = PieceType.Tcu5;
         }
 
         // 新しいピースをリストに追加
