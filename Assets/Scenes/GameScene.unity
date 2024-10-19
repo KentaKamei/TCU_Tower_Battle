@@ -1598,6 +1598,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6410726893742674755, guid: 27051797a1a13b74fbf1c7d7d1c520d8, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410726893742674755, guid: 27051797a1a13b74fbf1c7d7d1c520d8, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410726893742674755, guid: 27051797a1a13b74fbf1c7d7d1c520d8, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1541667357
+      objectReference: {fileID: 0}
     - target: {fileID: 6490950469111868162, guid: 27051797a1a13b74fbf1c7d7d1c520d8, type: 3}
       propertyPath: m_Name
       value: tcu5prefab
@@ -1978,6 +1990,18 @@ PrefabInstance:
     - target: {fileID: 7204891180870188203, guid: ffb6cb8521541794cb81c530ac21cc38, type: 3}
       propertyPath: pieceType
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7929460331645316954, guid: ffb6cb8521541794cb81c530ac21cc38, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7929460331645316954, guid: ffb6cb8521541794cb81c530ac21cc38, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7929460331645316954, guid: ffb6cb8521541794cb81c530ac21cc38, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1541667357
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
