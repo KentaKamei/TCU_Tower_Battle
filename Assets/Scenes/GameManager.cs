@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     public Camera mainCamera; // メインカメラの参照
     public bool isTrainingMode = false; // トレーニングモードかどうかを判断するフラグ
     public TowerAgent towerAgent; // TowerAgentの参照
+    private float turnTime = 0.0f; // ターンの経過時間を管理する変数
+    private float maxTurnTime = 5.0f; // 5秒が経過したら強制ドロップさせる
 
     
     void Start()
@@ -132,13 +134,28 @@ public class GameManager : MonoBehaviour
         MyTurn.gameObject.SetActive(false);
         AITurn.gameObject.SetActive(true);
 
+        // ターンの経過時間を更新
+        turnTime += Time.deltaTime;
+
         // 現在のピースが存在し、まだ落下していない場合のみAIに行動をリクエスト
         if (towerAgent != null && currentPiece != null && !currentPiece.IsClicked)
         {
             towerAgent.RequestDecision(); // AIに行動させる
+
+            // 一定時間が経過したらピースを強制的に落下させる
+            if (turnTime >= maxTurnTime)
+            {
+                currentPiece.DropPiece(); // ピースを強制的に落下
+                Debug.Log("Forced drop due to time limit.");
+                turnTime = 0.0f; // ターンタイマーをリセット
+            }
+        }
+        else
+        {
+            // ピースが落下した後はターンタイマーをリセット
+            turnTime = 0.0f;
         }
     }
-
 
     public void SpawnPiece()
     {
