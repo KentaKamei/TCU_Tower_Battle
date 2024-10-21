@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour
     public Button retry; // ゲームオーバーUIのリトライボタン
     public Button title; // ゲームオーバーUIのタイトルボタン
     public Button rotateButton; // ピースを回転させるボタン
-    public TextMeshProUGUI gameover; // ゲームオーバーUIのテキスト
+    public TextMeshProUGUI win; // ゲームオーバーUIのテキスト
+    public TextMeshProUGUI lose; // ゲームオーバーUIのテキスト
     public TextMeshProUGUI MyTurn; // 自分のターンのテキスト
     public TextMeshProUGUI AITurn; // AIのターンのテキスト
     public List<PieceController> allPieces; // すべてのピースを管理するリスト
@@ -53,7 +54,8 @@ public class GameManager : MonoBehaviour
         // ゲームオーバーUIを非表示にする
         retry.gameObject.SetActive(false);
         title.gameObject.SetActive(false);
-        gameover.gameObject.SetActive(false);
+        win.gameObject.SetActive(false);
+        lose.gameObject.SetActive(false);
         MyTurn.gameObject.SetActive(false);
         AITurn.gameObject.SetActive(false);
         
@@ -237,7 +239,15 @@ public class GameManager : MonoBehaviour
         // ゲームオーバーUIを表示
         retry.gameObject.SetActive(true);
         title.gameObject.SetActive(true);
-        gameover.gameObject.SetActive(true);
+
+        if(isPlayerTurn)
+        {
+            lose.gameObject.SetActive(true);
+        }
+        else
+        {
+            win.gameObject.SetActive(true);
+        }
 
         // ゲームの状態を停止またはリセットする処理を追加
         foreach (var piece in allPieces)
@@ -260,7 +270,8 @@ public class GameManager : MonoBehaviour
         // ゲームオーバーUIを非表示にする
         retry.gameObject.SetActive(false);
         title.gameObject.SetActive(false);
-        gameover.gameObject.SetActive(false);
+        win.gameObject.SetActive(false);
+        lose.gameObject.SetActive(false);
 
         // すべてのピースを削除
         foreach (PieceController piece in allPieces)
