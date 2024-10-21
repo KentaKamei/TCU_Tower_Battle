@@ -229,6 +229,10 @@ public class GameManager : MonoBehaviour
             // 回転ボタンを有効化
             rotateButton.interactable = true;
         }
+        else
+        {
+            towerAgent.SetPieceVisible(false);
+        }
 
         //Debug.Log("isPlayerTurn: " + isPlayerTurn);
 

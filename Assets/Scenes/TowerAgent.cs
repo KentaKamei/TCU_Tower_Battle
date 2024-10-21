@@ -13,7 +13,7 @@ public class TowerAgent : Agent
     private float noMovementTime = 0.0f; // ピースが動かなくなってからの経過時間
     private float noMovementThreshold = 1.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
     public Transform currentPieceTransform; // Transformをキャッシュする変数
-    
+    private bool isVisible;
 
     public override void OnEpisodeBegin()
     {
@@ -82,6 +82,7 @@ public class TowerAgent : Agent
             // 一定時間が経過した場合にピースを落下させる
             if (noMovementTime >= noMovementThreshold)
             {
+                SetPieceVisible(true);
                 currentPiece.DropPiece();
                 //Debug.Log("ドロップピース");
             }
@@ -221,6 +222,23 @@ public class TowerAgent : Agent
         }
 
         return cachedStageShape;
+    }
+
+    public void SetPieceVisible(bool isVisible)
+    {
+        // SpriteRendererがある場合
+        SpriteRenderer spriteRenderer = currentPiece.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = isVisible;
+        }
+
+        // MeshRendererがある場合（3Dモデル用）
+        MeshRenderer meshRenderer = currentPiece.GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            meshRenderer.enabled = isVisible;
+        }
     }
 
 
