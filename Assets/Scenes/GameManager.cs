@@ -92,6 +92,7 @@ public class GameManager : MonoBehaviour
     {
         MyTurn.gameObject.SetActive(true);
         AITurn.gameObject.SetActive(false);
+        towerAgent.SetPieceVisible(true);
 
         if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
         {
