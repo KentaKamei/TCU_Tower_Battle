@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
-    public bool isPlayerTurn = false;
+    public bool isPlayerTurn = true;
     public float yOffset = 3.5f;
     public Camera mainCamera; // メインカメラの参照
     public bool isTrainingMode = false; // トレーニングモードかどうかを判断するフラグ
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         }
 
         // 初期のピースを生成
-        SpawnPiece();
+        //SpawnPiece();
 
         // ゲームオーバーUIを非表示にする
         retry.gameObject.SetActive(false);
@@ -137,16 +137,6 @@ public class GameManager : MonoBehaviour
         {
             towerAgent.RequestDecision(); // AIに行動させる
         }
-
-        // ピースが落下し、完全に静止した後に次のピースを生成する
-        if (currentPiece != null && currentPiece.IsClicked)
-        {
-            if (currentPiece.GetComponent<Rigidbody2D>().velocity.magnitude < 0.0001f)
-            {
-                currentPiece = null; // currentPieceをリセット
-                SpawnPiece(); // 新しいピースを生成
-            }
-        }
     }
 
 
@@ -174,7 +164,7 @@ public class GameManager : MonoBehaviour
         Vector3 spawnPosition = new Vector3(0, yOffset, 0);
 
         // タワーの高さをデバッグ出力
-        //Debug.Log("Tower Height: " + towerHeight);
+        //Debug.Log("spawn");
 
         // ピースを生成
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
@@ -210,7 +200,7 @@ public class GameManager : MonoBehaviour
             towerAgent.currentPiece = currentPiece;
             towerAgent.currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>();
             towerAgent.currentPieceTransform = currentPiece.transform;
-            Debug.Log("TowerAgent's currentPiece updated to: " + currentPiece.name);
+            //Debug.Log("TowerAgent's currentPiece updated to: " + currentPiece.name);
         }
 
 
@@ -288,7 +278,16 @@ public class GameManager : MonoBehaviour
 
     public void BackToTitle()
     {
-        // タイトル画面に戻る（"TitleScene"という名前のシーンに切り替え）
+        // ゲームオブジェクトをすべてクリアしてからタイトル画面へ遷移
+        foreach (PieceController piece in allPieces)
+        {
+            Destroy(piece.gameObject);
+        }
+        allPieces.Clear();
+
+        // ゲーム状態をリセット
+        currentPiece = null;
+
         SceneManager.LoadScene("TitleScene");
     }
 

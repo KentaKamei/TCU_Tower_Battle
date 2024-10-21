@@ -22,10 +22,16 @@ public class TowerAgent : Agent
         ResetStageCache();  // キャッシュをクリア
         currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
         currentPieceTransform = currentPiece.transform; 
+        gameManager.isPlayerTurn = true; // プレイヤーのターンからスタート
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        if (currentPiece == null)
+        {
+            Debug.LogWarning("currentPiece is null during observation collection.");
+            return;
+        }
         // 1. ピースの位置を観測
         sensor.AddObservation(currentPiece.transform.position);
 
