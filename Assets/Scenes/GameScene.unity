@@ -418,8 +418,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37c7076e1512274e8fb1007b65c9b95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minTriangles: 7
-  maxTriangles: 11
+  minTriangles: 10
+  maxTriangles: 13
   maxWidth: 1.3
   minHeight: 0.5
   maxHeight: 0.7
@@ -1345,7 +1345,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 54c7ec25e9db6a746846b672b29c911c, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: e873e8c66499b46488c0d0bf05810924, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 2
   m_BehaviorName: TowerAgent
@@ -2231,11 +2231,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2607667569481155366, guid: 90ba35dcd6c9ec5448da80019e5feb4b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 175.55058
+      value: -0.3
       objectReference: {fileID: 0}
     - target: {fileID: 2607667569481155366, guid: 90ba35dcd6c9ec5448da80019e5feb4b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 159.13095
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2607667569481155366, guid: 90ba35dcd6c9ec5448da80019e5feb4b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2340,11 +2340,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3444573005367907414, guid: 0c7e41ff4c7f2fe4e894002087ec5ec9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 175.55058
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 3444573005367907414, guid: 0c7e41ff4c7f2fe4e894002087ec5ec9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 159.13095
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3444573005367907414, guid: 0c7e41ff4c7f2fe4e894002087ec5ec9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2429,11 +2429,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 226202011330352100, guid: b1aebbf6b6583cd46aece05908f75b39, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 175.55058
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 226202011330352100, guid: b1aebbf6b6583cd46aece05908f75b39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 159.13095
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 226202011330352100, guid: b1aebbf6b6583cd46aece05908f75b39, type: 3}
       propertyPath: m_LocalPosition.z
