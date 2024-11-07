@@ -69,6 +69,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+
+
         // トレーニング時は両方AIが行動
         if (isTrainingMode)
         {
@@ -85,9 +87,27 @@ public class GameManager : MonoBehaviour
                 HandleAITurn();  // AIのターン処理
             }
         }
+        
+        if (AreAllPiecesStationary())
+        {
+            SpawnPiece();
+        }
+
+
     }
 
 
+    public bool AreAllPiecesStationary()
+    {
+        foreach (var piece in allPieces)
+        {
+            if (!piece.IsStationary())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
     private void HandlePlayerTurn()
     {
         MyTurn.gameObject.SetActive(true);

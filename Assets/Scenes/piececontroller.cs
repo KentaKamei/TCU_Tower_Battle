@@ -27,15 +27,6 @@ public class PieceController : MonoBehaviour
             if (rb.velocity.magnitude < 0.0001f)
             {
                 stationaryTime += Time.deltaTime;
-                if (stationaryTime >= stationaryThreshold)
-                {
-                    // 一定時間静止したら次のピースを生成
-                    if (gameManager != null && gameManager.currentPiece == this)
-                    {
-                        gameManager.SpawnPiece(); // 新しいピースを生成
-                    }
-                    isClicked = false;
-                }
             }
             else
             {
@@ -68,5 +59,9 @@ public class PieceController : MonoBehaviour
     public bool HasFallen()
     {
         return hasFallen;
+    }
+    public bool IsStationary()
+    {
+        return stationaryTime >= stationaryThreshold;
     }
 }
