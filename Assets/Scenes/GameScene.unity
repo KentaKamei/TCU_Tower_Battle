@@ -1345,7 +1345,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: e873e8c66499b46488c0d0bf05810924, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 257d051dcd3d93342adfb83d990c20c9, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 2
   m_BehaviorName: TowerAgent

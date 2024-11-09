@@ -11,7 +11,7 @@ public class TowerAgent : Agent
     public Rigidbody2D currentPieceRigidbody;
     private float[] cachedStageShape;
     private float noMovementTime = 0.0f; // ピースが動かなくなってからの経過時間
-    private float noMovementThreshold = 1.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
+    private float noMovementThreshold = 3.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
     public Transform currentPieceTransform; // Transformをキャッシュする変数
     private bool isVisible;
 
@@ -84,6 +84,7 @@ public class TowerAgent : Agent
             {
                 SetPieceVisible(true);
                 currentPiece.DropPiece();
+                noMovementTime = 0.0f;
                 //Debug.Log("ドロップピース");
             }
         }
