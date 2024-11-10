@@ -248,18 +248,21 @@ public class TowerAgent : Agent
 
     public void SetPieceVisible(bool isVisible)
     {
-        // SpriteRendererがある場合
-        SpriteRenderer spriteRenderer = currentPiece.GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
+        if (currentPiece != null)
         {
-            spriteRenderer.enabled = isVisible;
-        }
+            // SpriteRendererがある場合
+            SpriteRenderer spriteRenderer = currentPiece.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.enabled = isVisible;
+            }
 
-        // MeshRendererがある場合（3Dモデル用）
-        MeshRenderer meshRenderer = currentPiece.GetComponent<MeshRenderer>();
-        if (meshRenderer != null)
-        {
-            meshRenderer.enabled = isVisible;
+            // MeshRendererがある場合（3Dモデル用）
+            MeshRenderer meshRenderer = currentPiece.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                meshRenderer.enabled = isVisible;
+            }
         }
     }
 

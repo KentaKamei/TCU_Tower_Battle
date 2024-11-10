@@ -51,7 +51,7 @@ public class PieceController : MonoBehaviour
     {
         if (!isClicked)
         {
-            rb.gravityScale = 0.5f; // ピースを落下させる
+            rb.gravityScale = 0.4f; // ピースを落下させる
             isClicked = true;
         }
     }

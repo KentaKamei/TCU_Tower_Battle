@@ -50,9 +50,6 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Piece prefabs are not set.");
         }
 
-        // 初期のピースを生成
-        //SpawnPiece();
-
         // ゲームオーバーUIを非表示にする
         retry.gameObject.SetActive(false);
         title.gameObject.SetActive(false);
@@ -90,7 +87,7 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        if (AreAllPiecesStationary())
+        if (allPieces.Count > 0 && AreAllPiecesStationary())
         {
             SpawnPiece();
         }
@@ -213,8 +210,7 @@ public class GameManager : MonoBehaviour
 
         Vector3 spawnPosition = new Vector3(0, yOffset, 0);
 
-        // タワーの高さをデバッグ出力
-        //Debug.Log("spawn");
+        Debug.Log("spawn");
 
         // ピースを生成
         GameObject piece = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
@@ -344,16 +340,30 @@ public class GameManager : MonoBehaviour
 
     public void BackToTitle()
     {
-        // ゲームオブジェクトをすべてクリアしてからタイトル画面へ遷移
+        // すべてのピースを削除しリストをクリア
         foreach (PieceController piece in allPieces)
         {
             Destroy(piece.gameObject);
         }
         allPieces.Clear();
 
-        // ゲーム状態をリセット
-        currentPiece = null;
+        // ゲームの状態をリセット
+        towerAgent.currentPiece = null;
+        towerAgent.currentPieceRigidbody = null;
+        towerAgent.currentPieceTransform = null;
 
+        // 初期位置やタイマーのリセット
+        currentPiece = null;
+        yOffset = 3.5f;
+        turnTime = 0.0f;
+        lastDecisionTime = 0.0f;
+        isPlayerTurn = true;
+
+        // カメラ位置を初期位置に戻す
+        mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, yOffset - 3.5f, mainCamera.transform.position.z);
+
+
+        // タイトル画面へ遷移
         SceneManager.LoadScene("TitleScene");
     }
 
