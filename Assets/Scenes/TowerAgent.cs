@@ -10,15 +10,7 @@ public class TowerAgent : Agent
     public StageGenerator stageGenerator;// stagegeneratorの参照
     public Rigidbody2D currentPieceRigidbody;
     private float[] cachedStageShape;
-    private float noMovementTime = 0.0f; // ピースが動かなくなってからの経過時間
-    private float noMovementThreshold = 3.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
     public Transform currentPieceTransform; // Transformをキャッシュする変数
-    private bool isVisible;
-    private float movementThreshold = 0.1f; // 小さな動きを無視する閾値
-    private float totalMoveX = 0.0f;
-    private float totalRotationX = 0.0f;
-    private float baceline = 60f;
-
 
 
     public override void OnEpisodeBegin()
@@ -65,57 +57,13 @@ public class TowerAgent : Agent
     {
 
         // エージェントの行動を処理
-        float moveX = actions.ContinuousActions[0]; // ピースの移動
-        float rotationZ = actions.ContinuousActions[1] * 60; // ピースの回転
+        float moveX = actions.ContinuousActions[0] * 5; // ピースの移動
+        float rotationZ = actions.ContinuousActions[1] * 180; // ピースの回転
 
-        // ピースを移動および回転させる処理
-        if (Mathf.Abs(moveX) > movementThreshold)
-        {
-            MovePiece(moveX);
-            totalMoveX += Mathf.Abs(moveX);
-        }
-        if (Mathf.Abs(actions.ContinuousActions[1]) > movementThreshold)
-        {
-            RotatePiece(rotationZ);
-            totalRotationX += Mathf.Abs(actions.ContinuousActions[1]);
-        }
-
-
-        
-        // 動かした後、ピースの速度と角速度を確認
-        if (currentPieceRigidbody.velocity.magnitude < 0.01f && Mathf.Abs(currentPieceRigidbody.angularVelocity) < 0.1f)
-        {
-            noMovementTime += Time.deltaTime;
-            // 一定時間が経過した場合にピースを落下させる
-            if (noMovementTime >= noMovementThreshold)
-            {
-                SetPieceVisible(true);
-                currentPiece.DropPiece();
-                Debug.Log("ドロップピース");
-                noMovementTime = 0.0f;
-                if(totalMoveX + totalRotationX > baceline)
-                {
-                    AddReward(totalMoveX + totalRotationX - baceline);
-                    Debug.Log("動きすぎ" + (totalMoveX + totalRotationX - baceline));
-                }
-                else
-                {
-                    AddReward(baceline - totalMoveX + totalRotationX);
-                    Debug.Log("スムーズ" + (baceline - totalMoveX + totalRotationX));
-                }
-                totalMoveX = 0;
-                totalRotationX = 0;
-                // ピースが落下した後はターンタイマーをリセット
-                gameManager.turnTime = 0.0f;
-                gameManager.lastDecisionTime = 0.0f;
-
-            }
-
-        }
-        else
-        {
-            noMovementTime = 0.0f; // ピースが動いている間はリセット
-        }
+        MovePiece(moveX);
+        RotatePiece(rotationZ);
+        currentPiece.DropPiece();
+        Debug.Log("ドロップピース");
 
     }
 
@@ -170,13 +118,10 @@ public class TowerAgent : Agent
         // ステージの範囲を取得
         float leftBoundary = stageGenerator.minX;
         float rightBoundary = stageGenerator.maxX;
-        //Debug.Log("leftBoundary" + leftBoundary);
-        //Debug.Log("rightBoundary" + rightBoundary);
 
 
         // 新しい位置がステージの範囲内に収まるように制限
         newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
-        //Debug.Log("newPosition.x" + newPosition.x);
 
 
         // ピースを新しい位置に移動
@@ -211,27 +156,4 @@ public class TowerAgent : Agent
 
         return surfaceShape;
     }
-
-
-    public void SetPieceVisible(bool isVisible)
-    {
-        if (currentPiece != null)
-        {
-            // SpriteRendererがある場合
-            SpriteRenderer spriteRenderer = currentPiece.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.enabled = isVisible;
-            }
-
-            // MeshRendererがある場合（3Dモデル用）
-            MeshRenderer meshRenderer = currentPiece.GetComponent<MeshRenderer>();
-            if (meshRenderer != null)
-            {
-                meshRenderer.enabled = isVisible;
-            }
-        }
-    }
-
-
 }

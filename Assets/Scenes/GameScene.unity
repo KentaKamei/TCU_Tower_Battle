@@ -1347,9 +1347,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 9f4ad1c21b58d0e4e8faf7e500c92f53, type: 3}
   m_InferenceDevice: 1
-  m_BehaviorType: 0
+  m_BehaviorType: 2
   m_BehaviorName: TowerAgent
   TeamId: 0
   m_UseChildSensors: 1
@@ -2196,9 +2196,7 @@ MonoBehaviour:
   mainCamera: {fileID: 519420031}
   isTrainingMode: 0
   towerAgent: {fileID: 0}
-  turnTime: 0
-  lastDecisionTime: 0
-  isGameOver: 0
+  hasRequestedAction: 0
 --- !u!4 &2124257786
 Transform:
   m_ObjectHideFlags: 0

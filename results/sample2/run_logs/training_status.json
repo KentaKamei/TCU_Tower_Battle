@@ -2,22 +2,22 @@
     "TowerAgent": {
         "checkpoints": [
             {
-                "steps": 128,
-                "file_path": "results\\sample2\\TowerAgent\\TowerAgent-128.onnx",
-                "reward": null,
-                "creation_time": 1731263212.0517807,
+                "steps": 2001,
+                "file_path": "results\\sample2\\TowerAgent\\TowerAgent-2001.onnx",
+                "reward": 23.113300492610836,
+                "creation_time": 1731267670.8061867,
                 "auxillary_file_paths": [
-                    "results\\sample2\\TowerAgent\\TowerAgent-128.pt"
+                    "results\\sample2\\TowerAgent\\TowerAgent-2001.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 128,
+            "steps": 2001,
             "file_path": "results\\sample2\\TowerAgent.onnx",
-            "reward": null,
-            "creation_time": 1731263212.0517807,
+            "reward": 23.113300492610836,
+            "creation_time": 1731267670.8061867,
             "auxillary_file_paths": [
-                "results\\sample2\\TowerAgent\\TowerAgent-128.pt"
+                "results\\sample2\\TowerAgent\\TowerAgent-2001.pt"
             ]
         }
     },

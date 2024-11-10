@@ -30,17 +30,17 @@ public class GameManager : MonoBehaviour
     public Camera mainCamera; // メインカメラの参照
     public bool isTrainingMode = false; // トレーニングモードかどうかを判断するフラグ
     public TowerAgent towerAgent; // TowerAgentの参照
-    public float turnTime = 0.0f; // ターンの経過時間を管理する変数
-    private float maxTurnTime = 10.0f; // 5秒が経過したら強制ドロップさせる
-    private float decisionInterval = 10.0f;  // AIの行動間隔
-    public float lastDecisionTime = 0.0f;  // 前回行動をリクエストした時間
-    public bool isGameOver = false;
+    public bool hasRequestedAction = false; // 行動要求のフラグ
+    private float heightRewardThreshold = 5.0f; // 目標とする塔の高さ
+    private float previousHighestPoint;
+    private float currentHighestPoint;
     
     void Start()
     {
         allPieces = new List<PieceController>(); // リストを初期化
         stageGenerator = FindObjectOfType<StageGenerator>();
         towerAgent = FindObjectOfType<TowerAgent>();
+        isPlayerTurn = true;
 
         // ML-Agentsがトレーニング中かどうかを確認
         isTrainingMode = Academy.Instance.IsCommunicatorOn;
@@ -68,8 +68,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-
-
         // トレーニング時は両方AIが行動
         if (isTrainingMode)
         {
@@ -111,7 +109,7 @@ public class GameManager : MonoBehaviour
     {
         MyTurn.gameObject.SetActive(true);
         AITurn.gameObject.SetActive(false);
-        towerAgent.SetPieceVisible(true);
+        //towerAgent.SetPieceVisible(true);
 
         if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
         {
@@ -156,34 +154,46 @@ public class GameManager : MonoBehaviour
         MyTurn.gameObject.SetActive(false);
         AITurn.gameObject.SetActive(true);
 
-        // ターンの経過時間を更新
-        turnTime += Time.deltaTime;
 
         // 現在のピースが存在し、まだ落下していない場合のみAIに行動をリクエスト
         if (towerAgent != null && currentPiece != null && !currentPiece.IsClicked)
         {
-            if (turnTime - lastDecisionTime >= decisionInterval)
+            if (!hasRequestedAction)
             {
+                previousHighestPoint = CalculateTowerHeight();//ピースドロップ前の高さ
                 towerAgent.RequestDecision();
-                lastDecisionTime = turnTime;  // 前回の行動リクエストの時間を更新
+                hasRequestedAction = true;
             }
-
-            // 一定時間が経過したらピースを強制的に落下させる           
-            if (!isTrainingMode && turnTime >= maxTurnTime)
-            {
-                towerAgent.SetPieceVisible(true);
-                currentPiece.DropPiece(); // ピースを強制的に落下
-                Debug.Log("Forced drop due to time limit.");
-                turnTime = 0.0f; // ターンタイマーをリセット
-                lastDecisionTime = 0.0f;
-            }
-            
         }
 
         if(isTrainingMode && currentPiece.IsStationary() && currentPiece.isClicked)
         {
             towerAgent.AddReward(5.0f);
+            hasRequestedAction = false;
             Debug.Log("積み上げ成功");
+            currentHighestPoint = CalculateTowerHeight();//ピースドロップ後の高さ
+
+            if (previousHighestPoint - currentPiece.transform.position.y >= 0)
+            {
+                towerAgent.AddReward(1.0f); // 安定性の報酬
+                Debug.Log("安定性の報酬を追加: 1.0f");
+            }
+            else if (previousHighestPoint - currentPiece.transform.position.y < 0 && currentHighestPoint >= heightRewardThreshold)
+            {
+                towerAgent.AddReward(5.0f); // 安定性の報酬
+                Debug.Log("高さ更新の報酬を追加: 5.0f");
+            }
+            else if (previousHighestPoint - currentPiece.transform.position.y < 0 && currentHighestPoint >= heightRewardThreshold * 2)
+            {
+                towerAgent.AddReward(10.0f); // 安定性の報酬
+                Debug.Log("高さ更新の報酬を追加(2): 10.0f");
+            }
+            else if (previousHighestPoint - currentPiece.transform.position.y < 0 && currentHighestPoint >= heightRewardThreshold * 3)
+            {
+                towerAgent.AddReward(15.0f); // 安定性の報酬
+                Debug.Log("高さ更新の報酬を追加(3): 15.0f");
+            }
+
         }
     }
 
@@ -258,21 +268,14 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if(!isTrainingMode)
-            {
-                towerAgent.SetPieceVisible(false);
-            }
+            hasRequestedAction = false;
         }
-
-        //Debug.Log("isPlayerTurn: " + isPlayerTurn);
-
+        
     }
 
     public void GameOver()
     {
         // ゲームオーバーUIを表示
-        isGameOver = true;
-        Debug.Log("isGameOver" + isGameOver);
         retry.gameObject.SetActive(true);
         title.gameObject.SetActive(true);
 
@@ -291,7 +294,7 @@ public class GameManager : MonoBehaviour
             towerAgent.AddReward(rewardForStackedPieces);
             Debug.Log("ピース数報酬: " + rewardForStackedPieces);
 
-            towerAgent.AddReward(-40.0f); // ペナルティ
+            towerAgent.AddReward(-20.0f); // ペナルティ
             Debug.Log("ペナルティ報酬");
 
             towerAgent.EndEpisode(); // エピソード終了
@@ -347,11 +350,11 @@ public class GameManager : MonoBehaviour
         // 新しいピースを生成する
         SpawnPiece();
         isPlayerTurn = true;
+        hasRequestedAction = false;
 
         // 回転ボタンを有効化
         rotateButton.interactable = true;
 
-        isGameOver = false;
     }
 
     public void BackToTitle()
@@ -371,10 +374,8 @@ public class GameManager : MonoBehaviour
         // 初期位置やタイマーのリセット
         currentPiece = null;
         yOffset = 3.5f;
-        turnTime = 0.0f;
-        lastDecisionTime = 0.0f;
         isPlayerTurn = true;
-        isGameOver = false;
+        hasRequestedAction = false;
 
         // カメラ位置を初期位置に戻す
         mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, yOffset - 3.5f, mainCamera.transform.position.z);
