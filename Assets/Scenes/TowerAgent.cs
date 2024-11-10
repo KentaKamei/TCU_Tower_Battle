@@ -14,6 +14,8 @@ public class TowerAgent : Agent
     private float noMovementThreshold = 3.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
     public Transform currentPieceTransform; // Transformをキャッシュする変数
     private bool isVisible;
+    private float previousHighestPoint; // 前回の塔の最高点を保持
+
 
     public override void OnEpisodeBegin()
     {
@@ -23,6 +25,7 @@ public class TowerAgent : Agent
         currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
         currentPieceTransform = currentPiece.transform; 
         gameManager.isPlayerTurn = true; // プレイヤーのターンからスタート
+        previousHighestPoint = stageGenerator.baseY;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -48,12 +51,14 @@ public class TowerAgent : Agent
             sensor.AddObservation(height);
         }
 
-        // ステージの形状も観測に追加
-        float[] stageShape = CalculateStageShape();
-        foreach (float shape in stageShape)
-        {
-            sensor.AddObservation(shape);
-        }
+        // 5. ステージの範囲を観測 (minX, maxX, baseY)
+        sensor.AddObservation(stageGenerator.minX); // ステージの左端X座標
+        sensor.AddObservation(stageGenerator.maxX); // ステージの右端X座標
+        sensor.AddObservation(stageGenerator.baseY); // ステージの高さ
+
+        // 6. 現在の塔の最高点を観測
+        float highestPoint = gameManager.CalculateTowerHeight(); // 最高点の高さを取得
+        sensor.AddObservation(highestPoint); // 塔の最高点を追加
 
     }
 
@@ -73,6 +78,8 @@ public class TowerAgent : Agent
         // ピースを移動および回転させる処理
         MovePiece(moveX);
         RotatePiece(rotationZ);
+
+        
 
         // 動かした後、ピースの速度と角速度を確認
         if (currentPieceRigidbody.velocity.magnitude < 0.01f && Mathf.Abs(currentPieceRigidbody.angularVelocity) < 0.1f)
@@ -99,18 +106,30 @@ public class TowerAgent : Agent
             PieceController pieceController = piece.GetComponent<PieceController>();
             if (pieceController.HasFallen())
             {
+                // 現在積み上がっているピースの数に応じた報酬を与える
+                float rewardForStackedPieces = gameManager.allPieces.Count * 0.1f;
+                AddReward(rewardForStackedPieces);
+
                 //Debug.Log("ピースが落下しました。エピソード終了。");
                 AddReward(-5.0f); // ペナルティ
                 EndEpisode(); // エピソード終了
+                gameManager.turnTime = 0.0f; // ターンタイマーをリセット
+                gameManager.lastDecisionTime = 0.0f;
+
                 return;
             }
         }
 
         //Debug.Log("エピソード継続中。報酬を追加。");
-        AddReward(0.5f); // ピースがまだ落ちていないなら報酬
+        AddReward(0.3f); // ピースがまだ落ちていないなら報酬
 
-        float towerHeight = gameManager.CalculateTowerHeight();
-        AddReward(towerHeight * 0.05f);
+        // 現在の塔の最高点を取得
+        float currentHighestPoint = gameManager.CalculateTowerHeight();
+        if (currentHighestPoint <= previousHighestPoint)
+        {
+            AddReward(0.5f); // 最高点を維持した場合の報酬
+        }
+        
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -161,13 +180,6 @@ public class TowerAgent : Agent
         // 現在のピース位置を取得
         Vector3 newPosition = currentPiece.transform.position + new Vector3(moveX, 0, 0);
 
-        // ステージの幅に基づく移動制限
-        float leftBoundary = -stageGenerator.totalWidth / 2;  // ステージの左端
-        float rightBoundary = stageGenerator.totalWidth / 2;  // ステージの右端
-
-        // 新しい位置がステージ内に収まるように制限
-        newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
-
         // ピースを新しい位置に移動
         currentPiece.transform.position = newPosition;
     }
@@ -200,30 +212,6 @@ public class TowerAgent : Agent
         return surfaceShape;
     }
 
-    private float[] CalculateStageShape()
-    {
-        if (cachedStageShape != null) return cachedStageShape;
-
-        // stageGeneratorの参照があることを確認
-        if (stageGenerator == null)
-        {
-            Debug.LogError("StageGenerator is null!");
-            return new float[0]; // 空の配列を返す
-        }
-
-        // MeshFilterからメッシュを取得
-        Mesh mesh = stageGenerator.GetComponent<MeshFilter>().mesh;
-        Vector3[] vertices = mesh.vertices;
-
-        // 頂点のY座標を高さ情報として取得
-        cachedStageShape = new float[vertices.Length];
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            cachedStageShape[i] = vertices[i].y; // Y軸方向の高さを観測
-        }
-
-        return cachedStageShape;
-    }
 
     public void SetPieceVisible(bool isVisible)
     {

@@ -30,8 +30,10 @@ public class GameManager : MonoBehaviour
     public Camera mainCamera; // メインカメラの参照
     public bool isTrainingMode = false; // トレーニングモードかどうかを判断するフラグ
     public TowerAgent towerAgent; // TowerAgentの参照
-    private float turnTime = 0.0f; // ターンの経過時間を管理する変数
-    private float maxTurnTime = 5.0f; // 5秒が経過したら強制ドロップさせる
+    public float turnTime = 0.0f; // ターンの経過時間を管理する変数
+    private float maxTurnTime = 10.0f; // 5秒が経過したら強制ドロップさせる
+    private float decisionInterval = 1.0f;  // AIの行動間隔
+    public float lastDecisionTime = 0.0f;  // 前回行動をリクエストした時間
 
     
     void Start()
@@ -163,20 +165,26 @@ public class GameManager : MonoBehaviour
         // 現在のピースが存在し、まだ落下していない場合のみAIに行動をリクエスト
         if (towerAgent != null && currentPiece != null && !currentPiece.IsClicked)
         {
-            towerAgent.RequestDecision(); // AIに行動させる
-
+            if (turnTime - lastDecisionTime >= decisionInterval)
+                {
+                    towerAgent.RequestDecision();
+                    lastDecisionTime = turnTime;  // 前回の行動リクエストの時間を更新
+                }
             // 一定時間が経過したらピースを強制的に落下させる
             if (turnTime >= maxTurnTime)
             {
+                towerAgent.SetPieceVisible(true);
                 currentPiece.DropPiece(); // ピースを強制的に落下
                 Debug.Log("Forced drop due to time limit.");
                 turnTime = 0.0f; // ターンタイマーをリセット
+                lastDecisionTime = 0.0f;
             }
         }
         else
         {
             // ピースが落下した後はターンタイマーをリセット
             turnTime = 0.0f;
+            lastDecisionTime = 0.0f;
         }
     }
 
@@ -371,7 +379,7 @@ public class GameManager : MonoBehaviour
     }
     public float CalculateTowerHeight()
     {
-        float maxHeight = -6.0f;
+        float maxHeight = stageGenerator.baseY;
         foreach (var piece in allPieces)
         {
             if (piece.transform.position.y > maxHeight)

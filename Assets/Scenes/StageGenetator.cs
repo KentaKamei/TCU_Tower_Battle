@@ -12,7 +12,10 @@ public class StageGenerator : MonoBehaviour
     public float overlapFactor = 0.3f; // 重なりの度合い
     public Material stageMaterial; // ステージ用のマテリアル
     public float totalWidth; // ステージ全体の幅
-    
+    public float minX; // ステージのX座標範囲の最小値
+    public float maxX; // ステージのX座標範囲の最大値
+
+
     void Start()
     {
         // アンチエイリアシングを4xに設定
@@ -52,6 +55,11 @@ public class StageGenerator : MonoBehaviour
             vertices[i * 3] = new Vector3(currentX + width, baseY, 0); // 右上
             vertices[i * 3 + 1] = new Vector3(currentX + width / 2, baseY - height, 0); // 下
             vertices[i * 3 + 2] = new Vector3(currentX, baseY, 0); // 左上
+
+            // X座標の最小値と最大値を更新
+            minX = Mathf.Min(minX, vertices[i * 3 + 2].x);
+            maxX = Mathf.Max(maxX, vertices[i * 3].x);
+            
             // 三角形の頂点インデックスを設定
             triangles[i * 3] = i * 3;
             triangles[i * 3 + 1] = i * 3 + 1;
