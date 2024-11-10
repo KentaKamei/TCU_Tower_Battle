@@ -3,7 +3,7 @@ using UnityEngine;
 public class PieceController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private bool isClicked = false;
+    public bool isClicked = false;
     private float stationaryTime = 0.0f;
     private float stationaryThreshold = 1.25f; // 速度が一定以下になる時間
     private GameManager gameManager;

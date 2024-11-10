@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     public TowerAgent towerAgent; // TowerAgentの参照
     public float turnTime = 0.0f; // ターンの経過時間を管理する変数
     private float maxTurnTime = 10.0f; // 5秒が経過したら強制ドロップさせる
-    private float decisionInterval = 5.0f;  // AIの行動間隔
+    private float decisionInterval = 10.0f;  // AIの行動間隔
     public float lastDecisionTime = 0.0f;  // 前回行動をリクエストした時間
     public bool isGameOver = false;
     
@@ -163,12 +163,12 @@ public class GameManager : MonoBehaviour
         if (towerAgent != null && currentPiece != null && !currentPiece.IsClicked)
         {
             if (turnTime - lastDecisionTime >= decisionInterval)
-                {
-                    towerAgent.RequestDecision();
-                    lastDecisionTime = turnTime;  // 前回の行動リクエストの時間を更新
-                }
-            // 一定時間が経過したらピースを強制的に落下させる
-            
+            {
+                towerAgent.RequestDecision();
+                lastDecisionTime = turnTime;  // 前回の行動リクエストの時間を更新
+            }
+
+            // 一定時間が経過したらピースを強制的に落下させる           
             if (!isTrainingMode && turnTime >= maxTurnTime)
             {
                 towerAgent.SetPieceVisible(true);
@@ -179,11 +179,11 @@ public class GameManager : MonoBehaviour
             }
             
         }
-        else
+
+        if(isTrainingMode && currentPiece.IsStationary() && currentPiece.isClicked)
         {
-            // ピースが落下した後はターンタイマーをリセット
-            turnTime = 0.0f;
-            lastDecisionTime = 0.0f;
+            towerAgent.AddReward(5.0f);
+            Debug.Log("積み上げ成功");
         }
     }
 
@@ -287,12 +287,12 @@ public class GameManager : MonoBehaviour
 
         if (isTrainingMode && towerAgent != null)
         {
-            float rewardForStackedPieces = allPieces.Count * 0.5f;
+            float rewardForStackedPieces = allPieces.Count * 2.0f;
             towerAgent.AddReward(rewardForStackedPieces);
             Debug.Log("ピース数報酬: " + rewardForStackedPieces);
 
-            towerAgent.AddReward(-15.0f); // ペナルティ
-            Debug.Log("ペナルティ報酬: -15.0");
+            towerAgent.AddReward(-40.0f); // ペナルティ
+            Debug.Log("ペナルティ報酬");
 
             towerAgent.EndEpisode(); // エピソード終了
         }

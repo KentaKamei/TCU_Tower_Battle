@@ -17,7 +17,7 @@ public class TowerAgent : Agent
     private float movementThreshold = 0.1f; // 小さな動きを無視する閾値
     private float totalMoveX = 0.0f;
     private float totalRotationX = 0.0f;
-    private float baceline = 75f;
+    private float baceline = 60f;
 
 
 
@@ -86,7 +86,6 @@ public class TowerAgent : Agent
         if (currentPieceRigidbody.velocity.magnitude < 0.01f && Mathf.Abs(currentPieceRigidbody.angularVelocity) < 0.1f)
         {
             noMovementTime += Time.deltaTime;
-            
             // 一定時間が経過した場合にピースを落下させる
             if (noMovementTime >= noMovementThreshold)
             {
@@ -106,6 +105,9 @@ public class TowerAgent : Agent
                 }
                 totalMoveX = 0;
                 totalRotationX = 0;
+                // ピースが落下した後はターンタイマーをリセット
+                gameManager.turnTime = 0.0f;
+                gameManager.lastDecisionTime = 0.0f;
 
             }
 
