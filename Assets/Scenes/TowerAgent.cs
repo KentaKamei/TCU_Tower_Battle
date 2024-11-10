@@ -14,9 +14,11 @@ public class TowerAgent : Agent
     private float noMovementThreshold = 3.0f; // ピースが動かなくなってから落下させるまでの時間（秒）
     public Transform currentPieceTransform; // Transformをキャッシュする変数
     private bool isVisible;
-    private float previousHighestPoint; // 前回の塔の最高点を保持
-    private bool hasRotated = false; // 回転したかを記録するフラグ
-    private bool hasMoved = false; // 移動したかを記録するフラグ
+    private float movementThreshold = 0.1f; // 小さな動きを無視する閾値
+    private float totalMoveX = 0.0f;
+    private float totalRotationX = 0.0f;
+    private float baceline = 75f;
+
 
 
     public override void OnEpisodeBegin()
@@ -27,7 +29,7 @@ public class TowerAgent : Agent
         currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
         currentPieceTransform = currentPiece.transform; 
         gameManager.isPlayerTurn = true; // プレイヤーのターンからスタート
-        previousHighestPoint = stageGenerator.baseY;
+        
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -57,32 +59,29 @@ public class TowerAgent : Agent
         sensor.AddObservation(stageGenerator.minX); // ステージの左端X座標
         sensor.AddObservation(stageGenerator.maxX); // ステージの右端X座標
         sensor.AddObservation(stageGenerator.baseY); // ステージの高さ
-
-        // 6. 現在の塔の最高点を観測
-        float highestPoint = gameManager.CalculateTowerHeight(); // 最高点の高さを取得
-        sensor.AddObservation(highestPoint); // 塔の最高点を追加
-
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
 
-        // すでにピースが落下していたら行動しない
-        if (currentPiece.IsClicked)
-        {
-            return;
-        }
-
         // エージェントの行動を処理
         float moveX = actions.ContinuousActions[0]; // ピースの移動
-        float rotationZ = actions.ContinuousActions[1] * 180; // ピースの回転
+        float rotationZ = actions.ContinuousActions[1] * 60; // ピースの回転
 
         // ピースを移動および回転させる処理
-        MovePiece(moveX);
-        RotatePiece(rotationZ);
+        if (Mathf.Abs(moveX) > movementThreshold)
+        {
+            MovePiece(moveX);
+            totalMoveX += Mathf.Abs(moveX);
+        }
+        if (Mathf.Abs(actions.ContinuousActions[1]) > movementThreshold)
+        {
+            RotatePiece(rotationZ);
+            totalRotationX += Mathf.Abs(actions.ContinuousActions[1]);
+        }
+
 
         
-
         // 動かした後、ピースの速度と角速度を確認
         if (currentPieceRigidbody.velocity.magnitude < 0.01f && Mathf.Abs(currentPieceRigidbody.angularVelocity) < 0.1f)
         {
@@ -93,59 +92,29 @@ public class TowerAgent : Agent
             {
                 SetPieceVisible(true);
                 currentPiece.DropPiece();
+                Debug.Log("ドロップピース");
                 noMovementTime = 0.0f;
-                //Debug.Log("ドロップピース");
+                if(totalMoveX + totalRotationX > baceline)
+                {
+                    AddReward(totalMoveX + totalRotationX - baceline);
+                    Debug.Log("動きすぎ" + (totalMoveX + totalRotationX - baceline));
+                }
+                else
+                {
+                    AddReward(baceline - totalMoveX + totalRotationX);
+                    Debug.Log("スムーズ" + (baceline - totalMoveX + totalRotationX));
+                }
+                totalMoveX = 0;
+                totalRotationX = 0;
 
-                if (hasMoved)
-                {
-                    AddReward(0.2f); // 移動または回転を行ってから落下させたことに対する報酬
-                }
-
-                if (hasRotated)
-                {
-                    AddReward(0.2f); // 移動または回転を行ってから落下させたことに対する報酬
-                }
-                if(!hasRotated && !hasMoved)
-                {
-                    AddReward(-0.5f);
-                }
             }
+
         }
         else
         {
             noMovementTime = 0.0f; // ピースが動いている間はリセット
         }
 
-        // すべてのピースをチェック
-        foreach (var piece in gameManager.allPieces)
-        {
-            PieceController pieceController = piece.GetComponent<PieceController>();
-            if (pieceController.HasFallen())
-            {
-                // 現在積み上がっているピースの数に応じた報酬を与える
-                float rewardForStackedPieces = gameManager.allPieces.Count * 0.1f;
-                AddReward(rewardForStackedPieces);
-
-                //Debug.Log("ピースが落下しました。エピソード終了。");
-                AddReward(-5.0f); // ペナルティ
-                EndEpisode(); // エピソード終了
-                gameManager.turnTime = 0.0f; // ターンタイマーをリセット
-                gameManager.lastDecisionTime = 0.0f;
-
-                return;
-            }
-        }
-
-        //Debug.Log("エピソード継続中。報酬を追加。");
-        AddReward(0.3f); // ピースがまだ落ちていないなら報酬
-
-        // 現在の塔の最高点を取得
-        float currentHighestPoint = gameManager.CalculateTowerHeight();
-        if (currentHighestPoint <= previousHighestPoint)
-        {
-            AddReward(0.5f); // 最高点を維持した場合の報酬
-        }
-        
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -199,16 +168,17 @@ public class TowerAgent : Agent
         // ステージの範囲を取得
         float leftBoundary = stageGenerator.minX;
         float rightBoundary = stageGenerator.maxX;
+        //Debug.Log("leftBoundary" + leftBoundary);
+        //Debug.Log("rightBoundary" + rightBoundary);
+
 
         // 新しい位置がステージの範囲内に収まるように制限
         newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
+        //Debug.Log("newPosition.x" + newPosition.x);
+
 
         // ピースを新しい位置に移動
         currentPiece.transform.position = newPosition;
-        if (Mathf.Abs(moveX) > 0.01f)
-        {
-            hasMoved = true;
-        }
     }
 
     private void RotatePiece(float rotationZ)
@@ -216,11 +186,6 @@ public class TowerAgent : Agent
         // ピースを回転させる処理
         currentPieceTransform.Rotate(new Vector3(0, 0, rotationZ));
 
-         // 回転が行われた場合にフラグを立てる
-        if (Mathf.Abs(rotationZ) > 0.01f)
-        {
-            hasRotated = true;
-        }
     }
 
 

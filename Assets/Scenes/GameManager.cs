@@ -32,9 +32,9 @@ public class GameManager : MonoBehaviour
     public TowerAgent towerAgent; // TowerAgentの参照
     public float turnTime = 0.0f; // ターンの経過時間を管理する変数
     private float maxTurnTime = 10.0f; // 5秒が経過したら強制ドロップさせる
-    private float decisionInterval = 1.0f;  // AIの行動間隔
+    private float decisionInterval = 5.0f;  // AIの行動間隔
     public float lastDecisionTime = 0.0f;  // 前回行動をリクエストした時間
-
+    public bool isGameOver = false;
     
     void Start()
     {
@@ -271,6 +271,8 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         // ゲームオーバーUIを表示
+        isGameOver = true;
+        Debug.Log("isGameOver" + isGameOver);
         retry.gameObject.SetActive(true);
         title.gameObject.SetActive(true);
 
@@ -283,6 +285,18 @@ public class GameManager : MonoBehaviour
             win.gameObject.SetActive(true);
         }
 
+        if (isTrainingMode && towerAgent != null)
+        {
+            float rewardForStackedPieces = allPieces.Count * 0.5f;
+            towerAgent.AddReward(rewardForStackedPieces);
+            Debug.Log("ピース数報酬: " + rewardForStackedPieces);
+
+            towerAgent.AddReward(-15.0f); // ペナルティ
+            Debug.Log("ペナルティ報酬: -15.0");
+
+            towerAgent.EndEpisode(); // エピソード終了
+        }
+        
         // ゲームの状態を停止またはリセットする処理を追加
         foreach (var piece in allPieces)
         {
@@ -336,6 +350,8 @@ public class GameManager : MonoBehaviour
 
         // 回転ボタンを有効化
         rotateButton.interactable = true;
+
+        isGameOver = false;
     }
 
     public void BackToTitle()
@@ -358,6 +374,7 @@ public class GameManager : MonoBehaviour
         turnTime = 0.0f;
         lastDecisionTime = 0.0f;
         isPlayerTurn = true;
+        isGameOver = false;
 
         // カメラ位置を初期位置に戻す
         mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, yOffset - 3.5f, mainCamera.transform.position.z);

@@ -55,10 +55,6 @@ public class StageGenerator : MonoBehaviour
             vertices[i * 3] = new Vector3(currentX + width, baseY, 0); // 右上
             vertices[i * 3 + 1] = new Vector3(currentX + width / 2, baseY - height, 0); // 下
             vertices[i * 3 + 2] = new Vector3(currentX, baseY, 0); // 左上
-
-            // X座標の最小値と最大値を更新
-            minX = Mathf.Min(minX, vertices[i * 3 + 2].x);
-            maxX = Mathf.Max(maxX, vertices[i * 3].x);
             
             // 三角形の頂点インデックスを設定
             triangles[i * 3] = i * 3;
@@ -116,20 +112,15 @@ public class StageGenerator : MonoBehaviour
         }
         polygonCollider = gameObject.AddComponent<PolygonCollider2D>();
 
-/*
-        Vector2[] colliderPoints = new Vector2[centeredVertices.Length];
-        for (int i = 0; i < centeredVertices.Length; i++)
-        {
-            colliderPoints[i] = new Vector2(centeredVertices[i].x, centeredVertices[i].y);
-        }
-        polygonCollider.points = colliderPoints;
-*/
         
         Vector2[] colliderPoints = new Vector2[4];
         colliderPoints[0] = new Vector2(centeredVertices[2].x, centeredVertices[2].y);
         colliderPoints[1] = new Vector2(centeredVertices[centeredVertices.Length - 3].x, centeredVertices[centeredVertices.Length - 3].y);
         colliderPoints[2] = new Vector2(centeredVertices[centeredVertices.Length - 2].x, centeredVertices[centeredVertices.Length - 2].y);
         colliderPoints[3] = new Vector2(centeredVertices[1].x, centeredVertices[1].y);
+
+        minX = centeredVertices[2].x;
+        maxX = centeredVertices[centeredVertices.Length - 3].x;
 
         polygonCollider.points = colliderPoints;
 
