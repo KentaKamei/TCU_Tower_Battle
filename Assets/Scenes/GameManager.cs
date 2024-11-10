@@ -9,7 +9,8 @@ using Unity.MLAgents;
 public enum PieceType { Tcu1, Tcu2, Tcu3, Tcu4, Tcu5 }
 
 public class GameManager : MonoBehaviour
-{
+{    
+    
     public List<GameObject> TCUPrefabs; // 動物ピースのプレハブをリストで管理
     public PieceController currentPiece;
     public StageGenerator stageGenerator;// stagegeneratorの参照
@@ -37,10 +38,15 @@ public class GameManager : MonoBehaviour
     
     void Start()
     {
-        allPieces = new List<PieceController>(); // リストを初期化
+        Debug.Log("ゲーム開始");
+        // リストがnullの場合のみ初期化
+        if (allPieces == null)
+        {
+            allPieces = new List<PieceController>();
+        }
         stageGenerator = FindObjectOfType<StageGenerator>();
         towerAgent = FindObjectOfType<TowerAgent>();
-        isPlayerTurn = true;
+        
 
         // ML-Agentsがトレーニング中かどうかを確認
         isTrainingMode = Academy.Instance.IsCommunicatorOn;
@@ -64,10 +70,12 @@ public class GameManager : MonoBehaviour
         // 必要なコンポーネントを取得
         raycaster = FindObjectOfType<GraphicRaycaster>();
         eventSystem = FindObjectOfType<EventSystem>();
+        
     }
 
     void Update()
     {
+        Debug.Log("allpieces" + allPieces.Count);
         // トレーニング時は両方AIが行動
         if (isTrainingMode)
         {
@@ -88,6 +96,7 @@ public class GameManager : MonoBehaviour
         if (allPieces.Count > 0 && AreAllPiecesStationary())
         {
             SpawnPiece();
+            Debug.Log("AreAllPiecesStationary成功:スポーン");
         }
 
 
@@ -96,6 +105,7 @@ public class GameManager : MonoBehaviour
 
     public bool AreAllPiecesStationary()
     {
+        Debug.Log("AreAllPiecesStationary呼び出し");
         foreach (var piece in allPieces)
         {
             if (!piece.IsStationary())
@@ -109,7 +119,6 @@ public class GameManager : MonoBehaviour
     {
         MyTurn.gameObject.SetActive(true);
         AITurn.gameObject.SetActive(false);
-        //towerAgent.SetPieceVisible(true);
 
         if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
         {
@@ -250,6 +259,7 @@ public class GameManager : MonoBehaviour
 
         // 新しいピースをリストに追加
         allPieces.Add(currentPiece);
+        Debug.Log("add後のllPiecesの数: " + allPieces.Count);
 
          if (towerAgent != null)
         {
@@ -359,6 +369,12 @@ public class GameManager : MonoBehaviour
 
     public void BackToTitle()
     {
+        // TowerAgentを無効化
+        if (towerAgent != null)
+        {
+            towerAgent.enabled = false;
+        }
+
         // すべてのピースを削除しリストをクリア
         foreach (PieceController piece in allPieces)
         {
@@ -372,14 +388,12 @@ public class GameManager : MonoBehaviour
         towerAgent.currentPieceTransform = null;
 
         // 初期位置やタイマーのリセット
-        currentPiece = null;
         yOffset = 3.5f;
         isPlayerTurn = true;
         hasRequestedAction = false;
 
         // カメラ位置を初期位置に戻す
         mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, yOffset - 3.5f, mainCamera.transform.position.z);
-
 
         // タイトル画面へ遷移
         SceneManager.LoadScene("TitleScene");
