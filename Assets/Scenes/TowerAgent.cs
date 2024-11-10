@@ -15,6 +15,8 @@ public class TowerAgent : Agent
     public Transform currentPieceTransform; // Transformをキャッシュする変数
     private bool isVisible;
     private float previousHighestPoint; // 前回の塔の最高点を保持
+    private bool hasRotated = false; // 回転したかを記録するフラグ
+    private bool hasMoved = false; // 移動したかを記録するフラグ
 
 
     public override void OnEpisodeBegin()
@@ -73,7 +75,7 @@ public class TowerAgent : Agent
 
         // エージェントの行動を処理
         float moveX = actions.ContinuousActions[0]; // ピースの移動
-        float rotationZ = actions.ContinuousActions[1]; // ピースの回転
+        float rotationZ = actions.ContinuousActions[1] * 180; // ピースの回転
 
         // ピースを移動および回転させる処理
         MovePiece(moveX);
@@ -93,6 +95,20 @@ public class TowerAgent : Agent
                 currentPiece.DropPiece();
                 noMovementTime = 0.0f;
                 //Debug.Log("ドロップピース");
+
+                if (hasMoved)
+                {
+                    AddReward(0.2f); // 移動または回転を行ってから落下させたことに対する報酬
+                }
+
+                if (hasRotated)
+                {
+                    AddReward(0.2f); // 移動または回転を行ってから落下させたことに対する報酬
+                }
+                if(!hasRotated && !hasMoved)
+                {
+                    AddReward(-0.5f);
+                }
             }
         }
         else
@@ -180,14 +196,31 @@ public class TowerAgent : Agent
         // 現在のピース位置を取得
         Vector3 newPosition = currentPiece.transform.position + new Vector3(moveX, 0, 0);
 
+        // ステージの範囲を取得
+        float leftBoundary = stageGenerator.minX;
+        float rightBoundary = stageGenerator.maxX;
+
+        // 新しい位置がステージの範囲内に収まるように制限
+        newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
+
         // ピースを新しい位置に移動
         currentPiece.transform.position = newPosition;
+        if (Mathf.Abs(moveX) > 0.01f)
+        {
+            hasMoved = true;
+        }
     }
 
     private void RotatePiece(float rotationZ)
     {
         // ピースを回転させる処理
         currentPieceTransform.Rotate(new Vector3(0, 0, rotationZ));
+
+         // 回転が行われた場合にフラグを立てる
+        if (Mathf.Abs(rotationZ) > 0.01f)
+        {
+            hasRotated = true;
+        }
     }
 
 

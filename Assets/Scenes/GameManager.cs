@@ -171,7 +171,8 @@ public class GameManager : MonoBehaviour
                     lastDecisionTime = turnTime;  // 前回の行動リクエストの時間を更新
                 }
             // 一定時間が経過したらピースを強制的に落下させる
-            if (turnTime >= maxTurnTime)
+            
+            if (!isTrainingMode && turnTime >= maxTurnTime)
             {
                 towerAgent.SetPieceVisible(true);
                 currentPiece.DropPiece(); // ピースを強制的に落下
@@ -179,6 +180,7 @@ public class GameManager : MonoBehaviour
                 turnTime = 0.0f; // ターンタイマーをリセット
                 lastDecisionTime = 0.0f;
             }
+            
         }
         else
         {
@@ -260,7 +262,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            towerAgent.SetPieceVisible(false);
+            if(!isTrainingMode)
+            {
+                towerAgent.SetPieceVisible(false);
+            }
         }
 
         //Debug.Log("isPlayerTurn: " + isPlayerTurn);
