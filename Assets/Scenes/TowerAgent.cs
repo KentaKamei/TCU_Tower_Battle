@@ -9,7 +9,6 @@ public class TowerAgent : Agent
     public GameManager gameManager; // ゲームマネージャーの参照
     public StageGenerator stageGenerator;// stagegeneratorの参照
     public Rigidbody2D currentPieceRigidbody;
-    private float[] cachedStageShape;
     public Transform currentPieceTransform; // Transformをキャッシュする変数
 
 
@@ -17,7 +16,6 @@ public class TowerAgent : Agent
     {
         // ゲームのリセット処理
         ResetGame();
-        ResetStageCache();  // キャッシュをクリア
         currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
         currentPieceTransform = currentPiece.transform; 
         gameManager.isPlayerTurn = true; // プレイヤーのターンからスタート
@@ -75,20 +73,12 @@ public class TowerAgent : Agent
         //continuousActionsOut[1] = Input.GetAxis("Vertical");
     }
 
-
-    // ステージが再生成されるたびにキャッシュをクリアする
-    private void ResetStageCache()
-    {
-        cachedStageShape = null;  // キャッシュをリセット
-    }
-
     private void ResetGame()
     {
         // すべてのピースを削除
         foreach (PieceController piece in gameManager.allPieces)
         {
             Destroy(piece.gameObject);
-            ResetStageCache();  // キャッシュをクリア
         }
         gameManager.allPieces.Clear(); // リストをクリア
 
