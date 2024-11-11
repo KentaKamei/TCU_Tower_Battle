@@ -35,7 +35,11 @@ public class GameManager : MonoBehaviour
     private float heightRewardThreshold = 5.0f; // 目標とする塔の高さ
     private float previousHighestPoint;
     private float currentHighestPoint;
-    
+    private bool isDragging = false; // ドラッグ中かどうかを判定するフラグ
+    private Vector3 dragStartPosition; // ドラッグ開始時のマウス位置
+    private float pressDuration = 0f; // クリック押下時間
+    private float dragThresholdTime = 0.3f; // クリックとドラッグを区別する時間の閾値（秒）
+
     void Start()
     {
         if (allPieces == null)
@@ -110,34 +114,76 @@ public class GameManager : MonoBehaviour
         }
         return true;
     }
-    private void HandlePlayerTurn()
+private void HandlePlayerTurn()
+{
+    MyTurn.gameObject.SetActive(true);
+    AITurn.gameObject.SetActive(false);
+    if (currentPiece != null && !currentPiece.IsClicked)
     {
-        MyTurn.gameObject.SetActive(true);
-        AITurn.gameObject.SetActive(false);
-        //towerAgent.SetPieceVisible(true);
-
-        if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
+        // 回転ボタンがnullでない場合にのみ interactable を設定
+        if (rotateButton != null)
         {
-            // 回転ボタン以外のところでクリックされたかチェック
-            if (!IsPointerOverUIElement(rotateButton.gameObject) && !IsPointerOverUIElement(rotateButton2.gameObject))
+            rotateButton.interactable = true;
+        }
+        if (rotateButton2 != null)
+        {
+            rotateButton2.interactable = true;
+        }
+    }
+
+
+    // マウスが押されたとき
+    if (Input.GetMouseButtonDown(0) && currentPiece != null)
+    {
+        // 回転ボタン以外をクリックしたか確認
+        if (!IsPointerOverUIElement(rotateButton.gameObject) && !IsPointerOverUIElement(rotateButton2.gameObject))
+        {
+            if (IsPointerOverPiece(currentPiece)) // カレントピース上でクリックされたらドラッグ開始
+            {
+                isDragging = false;
+                pressDuration = 0f; // クリック押下時間をリセット
+                dragStartPosition = Input.mousePosition;
+            }
+            else // ピース以外をクリックしたら即ドロップ
             {
                 currentPiece.DropPiece();
                 rotateButton.interactable = false;
                 rotateButton2.interactable = false;
             }
         }
+    }
 
-        if (currentPiece != null && !currentPiece.IsClicked)
+    // マウスが押されている間
+    if (Input.GetMouseButton(0) && currentPiece != null)
+    {
+        // 回転ボタン上ならドラッグ処理を行わない
+        if (IsPointerOverUIElement(rotateButton.gameObject) || IsPointerOverUIElement(rotateButton2.gameObject))
         {
-            // キーボード入力で左右に移動
-            float move = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
+            isDragging = false;
+            return;
+        }
 
-            // 現在のピース位置を取得
+        pressDuration += Time.deltaTime; // 押下時間をカウント
+
+        // ドラッグかどうかの判断
+        if (!isDragging && pressDuration > dragThresholdTime)
+        {
+            isDragging = true; // ドラッグ開始
+        }
+
+        if (isDragging && !currentPiece.IsClicked)
+        {
+            // マウスのドラッグ量に応じてピースを左右に移動
+            Vector3 dragCurrentPosition = Input.mousePosition;
+            float dragDeltaX = dragCurrentPosition.x - dragStartPosition.x;
+            float move = dragDeltaX * 0.0225f; // スケールを調整して適切な移動量に
+
+            // ピースの新しい位置を設定
             Vector3 newPosition = currentPiece.transform.position + new Vector3(move, 0, 0);
 
             // カメラの右端と左端のワールド座標を取得
-            float leftBoundary = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).x; // 画面の左端
-            float rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, Camera.main.nearClipPlane)).x; // 画面の右端
+            float leftBoundary = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).x;
+            float rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, Camera.main.nearClipPlane)).x;
 
             // 新しい位置が画面内に収まるように制限
             newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
@@ -145,14 +191,47 @@ public class GameManager : MonoBehaviour
             // ピースを新しい位置に移動
             currentPiece.transform.position = newPosition;
 
-            currentPiece.transform.position += new Vector3(move, 0, 0);
-            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-            if (scrollInput != 0f)
-            {
-                mainCamera.transform.position += new Vector3(0, scrollInput * 5f, 0); // スクロール量に応じてカメラを移動
-            }
+            // 次のフレームのために位置を更新
+            dragStartPosition = dragCurrentPosition;
         }
     }
+
+    // マウスボタンを離したとき
+    if (Input.GetMouseButtonUp(0))
+    {
+        // ボタン上で離した場合はドラッグやドロップを行わない
+        if (IsPointerOverUIElement(rotateButton.gameObject) || IsPointerOverUIElement(rotateButton2.gameObject))
+        {
+            isDragging = false;
+            pressDuration = 0f;
+            return;
+        }
+
+        if (!isDragging && pressDuration <= dragThresholdTime) // 短時間クリックの場合
+        {
+            currentPiece.DropPiece();
+            rotateButton.interactable = false;
+            rotateButton2.interactable = false;
+        }
+
+        isDragging = false; // ドラッグ状態をリセット
+        pressDuration = 0f; // 押下時間をリセット
+    }
+
+    // キーボードでの左右移動（ドラッグが発生していない場合のみ）
+    if (currentPiece != null && !currentPiece.IsClicked && !isDragging)
+    {
+        float move = Input.GetAxis("Horizontal") * Time.deltaTime * 7.5f;
+
+        Vector3 newPosition = currentPiece.transform.position + new Vector3(move, 0, 0);
+
+        float leftBoundary = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, Camera.main.nearClipPlane)).x;
+        float rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, Camera.main.nearClipPlane)).x;
+
+        newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
+        currentPiece.transform.position = newPosition;
+    }
+}
 
     // AIのターンの処理
     private void HandleAITurn()
@@ -202,7 +281,12 @@ public class GameManager : MonoBehaviour
 
         }
     }
-
+    private bool IsPointerOverPiece(PieceController piece)
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Collider2D pieceCollider = piece.GetComponent<Collider2D>();
+        return pieceCollider != null && pieceCollider.OverlapPoint(mousePosition);
+    }
     public void SpawnPiece()
     {
         if (TCUPrefabs == null || TCUPrefabs.Count == 0)
@@ -360,10 +444,6 @@ public class GameManager : MonoBehaviour
         isPlayerTurn = true;
         hasRequestedAction = false;
 
-        // 回転ボタンを有効化
-        rotateButton.interactable = true;
-        rotateButton2.interactable = true;
-
     }
 
     public void BackToTitle()
@@ -439,5 +519,4 @@ public class GameManager : MonoBehaviour
         }
         return maxHeight;
     }
-
 }
