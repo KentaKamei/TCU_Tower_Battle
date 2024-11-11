@@ -16,10 +16,18 @@ public class TowerAgent : Agent
     {
         // ゲームのリセット処理
         ResetGame();
-        currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>(); 
-        currentPieceTransform = currentPiece.transform; 
-        gameManager.isPlayerTurn = true; // プレイヤーのターンからスタート
+
+        if (currentPiece != null)
+        {
+            currentPieceRigidbody = currentPiece.GetComponent<Rigidbody2D>();
+            currentPieceTransform = currentPiece.transform;
+        }
+        else
+        {
+            Debug.LogWarning("currentPiece is null after ResetGame.");
+        }
         
+        gameManager.isPlayerTurn = true; // プレイヤーのターンからスタート
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -53,6 +61,11 @@ public class TowerAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        if (currentPiece == null)
+        {
+            Debug.LogWarning("currentPiece is null during action execution.");
+            return;
+        }
 
         // エージェントの行動を処理
         float moveX = actions.ContinuousActions[0] * 5; // ピースの移動
@@ -61,7 +74,7 @@ public class TowerAgent : Agent
         MovePiece(moveX);
         RotatePiece(rotationZ);
         currentPiece.DropPiece();
-        Debug.Log("ドロップピース");
+        //Debug.Log("ドロップピース");
 
     }
 
@@ -102,6 +115,8 @@ public class TowerAgent : Agent
 
     private void MovePiece(float moveX)
     {
+        if (currentPiece == null) return;
+
         // 現在のピース位置を取得
         Vector3 newPosition = currentPiece.transform.position + new Vector3(moveX, 0, 0);
 
@@ -109,22 +124,18 @@ public class TowerAgent : Agent
         float leftBoundary = stageGenerator.minX;
         float rightBoundary = stageGenerator.maxX;
 
-
         // 新しい位置がステージの範囲内に収まるように制限
         newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
 
-
         // ピースを新しい位置に移動
         currentPiece.transform.position = newPosition;
-    }
-
-    private void RotatePiece(float rotationZ)
+    }    private void RotatePiece(float rotationZ)
     {
+        if (currentPieceTransform == null) return;
+
         // ピースを回転させる処理
         currentPieceTransform.Rotate(new Vector3(0, 0, rotationZ));
-
     }
-
 
     // 塔の形
     private float[] CalculateSurfaceShape()

@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public Button retry; // ゲームオーバーUIのリトライボタン
     public Button title; // ゲームオーバーUIのタイトルボタン
     public Button rotateButton; // ピースを回転させるボタン
+    public Button rotateButton2; // ピースを回転させるボタン
     public TextMeshProUGUI win; // ゲームオーバーUIのテキスト
     public TextMeshProUGUI lose; // ゲームオーバーUIのテキスト
     public TextMeshProUGUI MyTurn; // 自分のターンのテキスト
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
         
         // 回転ボタンのクリックイベントを設定
         rotateButton.onClick.AddListener(RotatePiece);
+        rotateButton2.onClick.AddListener(RotatePiece2);
 
         // 必要なコンポーネントを取得
         raycaster = FindObjectOfType<GraphicRaycaster>();
@@ -117,10 +119,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && currentPiece != null) // 左クリックが押されたとき
         {
             // 回転ボタン以外のところでクリックされたかチェック
-            if (!IsPointerOverUIElement(rotateButton.gameObject))
+            if (!IsPointerOverUIElement(rotateButton.gameObject) && !IsPointerOverUIElement(rotateButton2.gameObject))
             {
                 currentPiece.DropPiece();
                 rotateButton.interactable = false;
+                rotateButton2.interactable = false;
             }
         }
 
@@ -268,6 +271,7 @@ public class GameManager : MonoBehaviour
         {
             // 回転ボタンを有効化
             rotateButton.interactable = true;
+            rotateButton2.interactable = true;
         }
         else
         {
@@ -311,6 +315,7 @@ public class GameManager : MonoBehaviour
 
         // 回転ボタンを無効化
         rotateButton.interactable = false;
+        rotateButton2.interactable = false;
 
         // トレーニング中なら自動でリトライ
         if (isTrainingMode)
@@ -357,6 +362,7 @@ public class GameManager : MonoBehaviour
 
         // 回転ボタンを有効化
         rotateButton.interactable = true;
+        rotateButton2.interactable = true;
 
     }
 
@@ -393,6 +399,14 @@ public class GameManager : MonoBehaviour
         if (currentPiece != null && currentPiece.enabled)
         {
             currentPiece.transform.Rotate(0, 0, rotationAngle);
+        }
+    }
+
+    public void RotatePiece2()
+    {
+        if (currentPiece != null && currentPiece.enabled)
+        {
+            currentPiece.transform.Rotate(0, 0, -rotationAngle);
         }
     }
 
