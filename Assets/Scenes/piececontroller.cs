@@ -13,7 +13,11 @@ public class PieceController : MonoBehaviour
     
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+         // すでにrbが設定されているか確認し、なければGetComponentで取得
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
         rb.gravityScale = 0; // 最初は重力を無効にする
         rb.velocity = Vector2.zero; // 初期速度をゼロに設定
         gameManager = FindObjectOfType<GameManager>();
@@ -49,7 +53,8 @@ public class PieceController : MonoBehaviour
 
     public void DropPiece()
     {
-        if (!isClicked)
+
+        if (!isClicked && rb != null)
         {
             rb.gravityScale = 0.4f; // ピースを落下させる
             isClicked = true;
