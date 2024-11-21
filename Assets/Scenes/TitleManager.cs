@@ -9,9 +9,14 @@ public class TitleManager : MonoBehaviour
     public Button easy;
     public Button normal;
     public Button hard;
+    public GameObject tcu1;
+    public GameObject tcu2;
+    public GameObject tcu3;
+    public GameObject tcu4;
+    public GameObject tcu5;
     public TextMeshProUGUI ClickText; // 変数名を修正
 
-
+    private bool ObjectsShown = false;
     private bool buttonsShown = false; // ボタンが表示されているかどうかのフラグ
 
     // Start is called before the first frame update
@@ -21,15 +26,21 @@ public class TitleManager : MonoBehaviour
         easy.gameObject.SetActive(false);
         normal.gameObject.SetActive(false);
         hard.gameObject.SetActive(false);
+        tcu1.gameObject.SetActive(false);
+        tcu2.gameObject.SetActive(false);
+        tcu3.gameObject.SetActive(false);
+        tcu4.gameObject.SetActive(false);
+        tcu5.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         // ボタンが表示されていない場合、クリックで表示する
-        if (!buttonsShown && Input.GetMouseButtonDown(0))
+        if (!ObjectsShown && !buttonsShown && Input.GetMouseButtonDown(0))
         {
             ShowButtons();
+            ShowObjects();
             ClickText.gameObject.SetActive(false);
         }
     }
@@ -44,4 +55,17 @@ public class TitleManager : MonoBehaviour
         // フラグを更新して、二度と同じ処理が実行されないようにする
         buttonsShown = true;
     }
+        void ShowObjects()
+    {
+        // ボタンを表示する
+        tcu1.gameObject.SetActive(true);
+        tcu2.gameObject.SetActive(true);
+        tcu3.gameObject.SetActive(true);
+        tcu4.gameObject.SetActive(true);
+        tcu5.gameObject.SetActive(true);
+
+        // フラグを更新して、二度と同じ処理が実行されないようにする
+        ObjectsShown = true;
+    }
+
 }
