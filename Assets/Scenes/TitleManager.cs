@@ -18,8 +18,8 @@ public class TitleManager : MonoBehaviour
 
     private bool ObjectsShown = false;
     private bool buttonsShown = false; // ボタンが表示されているかどうかのフラグ
+    
 
-    // Start is called before the first frame update
     void Start()
     {
         // 最初はボタンを非表示にする
@@ -33,7 +33,6 @@ public class TitleManager : MonoBehaviour
         tcu5.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
         // ボタンが表示されていない場合、クリックで表示する
