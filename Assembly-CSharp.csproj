@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scenes\TitleManager.cs" />
     <Compile Include="Assets\Scenes\StageGenetator.cs" />
     <Compile Include="Assets\Scenes\ButtonClickSound.cs" />
+    <Compile Include="Assets\Scenes\BGMcontroller.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
