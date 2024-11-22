@@ -39,6 +39,12 @@ public class GameManager : MonoBehaviour
     private Vector3 dragStartPosition; // ドラッグ開始時のマウス位置
     private float pressDuration = 0f; // クリック押下時間
     private float dragThresholdTime = 0.3f; // クリックとドラッグを区別する時間の閾値（秒）
+    public AudioSource audioSource;  // 音声再生用AudioSource
+    public AudioClip winClip;        // 勝利時の音声
+    public AudioClip loseClip;       // 敗北時の音声
+    public AudioClip retryClip;       // リトライ時の音声
+
+
 
     void Start()
     {
@@ -373,10 +379,12 @@ private void HandlePlayerTurn()
         if(isPlayerTurn)
         {
             lose.gameObject.SetActive(true);
+            PlaySound(loseClip); // 敗北音声を再生
         }
         else
         {
             win.gameObject.SetActive(true);
+            PlaySound(winClip); // 勝利音声を再生
         }
 
         if (isTrainingMode && towerAgent != null)
@@ -407,9 +415,22 @@ private void HandlePlayerTurn()
             Invoke("Retry", 1.0f); // 1秒後にリトライ（少し待つことで安定）
         }
     }
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip); // 指定された音声を再生
+            Debug.Log($"再生中の音声: {clip.name}");
+        }
+        else
+        {
+            Debug.LogWarning("AudioSourceまたはAudioClipが設定されていません");
+        }
+    }
 
     public void Retry()
     {
+        PlaySound(retryClip);
         // ゲームオーバーUIを非表示にする
         retry.gameObject.SetActive(false);
         title.gameObject.SetActive(false);
@@ -447,7 +468,7 @@ private void HandlePlayerTurn()
     }
 
     public void BackToTitle()
-    {
+    {        
         // すべてのピースを削除しリストをクリア
         foreach (PieceController piece in allPieces)
         {
