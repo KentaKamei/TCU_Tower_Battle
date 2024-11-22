@@ -4,7 +4,7 @@ public class PieceController : MonoBehaviour
 {
     private Rigidbody2D rb;
     public bool isClicked = false;
-    private float stationaryTime = 0.0f;
+    public float stationaryTime = 0.0f;
     private float stationaryThreshold = 1.25f; // 速度が一定以下になる時間
     private GameManager gameManager;
     private bool hasFallen = false; // 落下フラグを追加
