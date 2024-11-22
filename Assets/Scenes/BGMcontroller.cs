@@ -1,20 +1,20 @@
 using UnityEngine;
 
-public class BGMController : MonoBehaviour
+public class PersistentBGM : MonoBehaviour
 {
-    public AudioSource audioSource;
+    private static PersistentBGM instance;
 
-    public void Start()
+    private void Awake()
     {
-        // Play On Awakeで再生されている場合でも制御可能
-        if (audioSource.isPlaying)
+        // インスタンスが既に存在している場合は、このオブジェクトを破棄
+        if (instance != null)
         {
-            Debug.Log("BGMが再生中です");
+            Destroy(gameObject);
+            return;
         }
-        else
-        {
-            Debug.Log("BGMを開始します");
-            audioSource.Play();
-        }
+
+        // インスタンスが存在しない場合は、このオブジェクトを保持
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 }
