@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04243d184637217408fe490b2a7405fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isClicked: 0
   pieceType: 4
 --- !u!60 &1481982142330686980
 PolygonCollider2D:
@@ -109,7 +110,7 @@ PolygonCollider2D:
   m_GameObject: {fileID: 6490950469111868162}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca1e5c3871602da48952c160efee55ad, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -296,8 +297,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDrag: 0.5
+  m_AngularDrag: 0.5
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:

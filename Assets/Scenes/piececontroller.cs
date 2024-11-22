@@ -20,6 +20,7 @@ public class PieceController : MonoBehaviour
         }
         rb.gravityScale = 0; // 最初は重力を無効にする
         rb.velocity = Vector2.zero; // 初期速度をゼロに設定
+        rb.angularVelocity = 0f; // 回転速度もリセット
         gameManager = FindObjectOfType<GameManager>();
     }
 

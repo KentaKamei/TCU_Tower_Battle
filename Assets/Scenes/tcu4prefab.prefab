@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4332731487965980895}
   - component: {fileID: 7929460331645316954}
   - component: {fileID: 7204891180870188203}
-  - component: {fileID: -812845244317253397}
   - component: {fileID: -2034696198264039275}
+  - component: {fileID: -812845244317253397}
   - component: {fileID: 5109641311658277261}
   m_Layer: 0
   m_Name: tcu4prefab
@@ -102,33 +102,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isClicked: 0
   pieceType: 3
---- !u!50 &-812845244317253397
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 278747139033483491}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!60 &-2034696198264039275
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -138,7 +111,7 @@ PolygonCollider2D:
   m_GameObject: {fileID: 278747139033483491}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ca1e5c3871602da48952c160efee55ad, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -365,6 +338,33 @@ PolygonCollider2D:
       - {x: -0.024999999, y: 1.48}
       - {x: -0.015, y: 1.48}
   m_UseDelaunayMesh: 0
+--- !u!50 &-812845244317253397
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278747139033483491}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0.5
+  m_AngularDrag: 0.5
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!114 &5109641311658277261
 MonoBehaviour:
   m_ObjectHideFlags: 0

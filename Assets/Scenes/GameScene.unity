@@ -3219,9 +3219,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 9f4ad1c21b58d0e4e8faf7e500c92f53, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 1
-  m_BehaviorType: 2
+  m_BehaviorType: 0
   m_BehaviorName: TowerAgent
   TeamId: 0
   m_UseChildSensors: 1
@@ -4538,7 +4538,6 @@ MonoBehaviour:
   winClip: {fileID: 8300000, guid: 86995d466305a2f4f9b0d6550371496c, type: 3}
   loseClip: {fileID: 8300000, guid: adb523db79f64734b8240d5f40487c08, type: 3}
   retryClip: {fileID: 8300000, guid: 634da3318424fd34fb82d156fb2773fe, type: 3}
-  titleClip: {fileID: 8300000, guid: 36c1926722510f646b29ea7f0eae8759, type: 3}
 --- !u!4 &2124257786
 Transform:
   m_ObjectHideFlags: 0
@@ -4658,6 +4657,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6746421608705996126, guid: 90ba35dcd6c9ec5448da80019e5feb4b, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: ca1e5c3871602da48952c160efee55ad, type: 2}
     - target: {fileID: 2607667569481155366, guid: 90ba35dcd6c9ec5448da80019e5feb4b, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.00780032
