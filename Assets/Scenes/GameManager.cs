@@ -43,6 +43,10 @@ public class GameManager : MonoBehaviour
     public AudioClip winClip;        // 勝利時の音声
     public AudioClip loseClip;       // 敗北時の音声
     public AudioClip retryClip;       // リトライ時の音声
+    private float cameraScrollSpeed = 5.0f; // カメラのスクロール速度
+    private float minCameraY = 0.0f; // カメラの最小高さ
+    private float maxCameraY = 20.0f; // カメラの最大高さ
+
 
 
 
@@ -159,6 +163,26 @@ private void HandlePlayerTurn()
         }
     }
 
+    // マウスホイールのスクロール量を取得
+    float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+    if (Mathf.Abs(scroll) > 0.01f) // スクロールが発生した場合
+    {
+        Vector3 cameraPosition = mainCamera.transform.position;
+
+        // スクロール量に基づいてカメラのY位置を変更
+        cameraPosition.y += scroll * cameraScrollSpeed;
+
+        // カメラの高さを制限
+        cameraPosition.y = Mathf.Clamp(cameraPosition.y, minCameraY, maxCameraY);
+
+        // カメラの新しい位置を適用
+        mainCamera.transform.position = cameraPosition;
+
+        Debug.Log($"カメラ位置: {cameraPosition}");
+    }
+
+    
     // マウスが押されている間
     if (Input.GetMouseButton(0) && currentPiece != null)
     {
