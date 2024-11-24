@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     private float cameraScrollSpeed = 5.0f; // カメラのスクロール速度
     private float minCameraY = 0.0f; // カメラの最小高さ
     private float maxCameraY = 20.0f; // カメラの最大高さ
-    private float clickedTimeThreshold = 7.5f; // ピースがクリックされたままの許容時間（秒）
+    private float clickedTimeThreshold = 15.0f; // ピースがクリックされたままの許容時間（秒）
     private float clickedTimeCounter = 0.0f;   // ピースがクリックされてからの経過時間
 
 
@@ -326,9 +326,20 @@ public class GameManager : MonoBehaviour
             // 許容時間を超えた場合にペナルティを与え、次のステップに進む
             if (clickedTimeCounter > clickedTimeThreshold)
             {
-                Debug.LogWarning("強制落下");
-                currentPiece.stationaryTime = 10.0f;
+                Debug.LogWarning("ピース停止");
                 clickedTimeCounter = 0.0f; // タイマーをリセット
+
+                if (currentPiece.rb != null)
+                {
+                    // 動きを完全に停止
+                    currentPiece.rb.velocity = Vector2.zero; // 速度をリセット
+                    currentPiece.rb.angularVelocity = 0.0f;  // 回転速度をリセット
+
+                    // 必要に応じて位置固定を有効化
+                    currentPiece.rb.constraints = RigidbodyConstraints2D.FreezeAll; // 動きと回転を固定
+                    clickedTimeCounter = 0.0f; // タイマーをリセット
+                }
+                
             }
         }
     }
