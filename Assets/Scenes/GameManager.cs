@@ -291,12 +291,20 @@ public class GameManager : MonoBehaviour
         if (currentPiece.IsStationary())
         {
             clickedTimeCounter = 0.0f;
-            towerAgent.AddReward(5.0f);
+            //towerAgent.AddReward(5.0f);//hard
+            towerAgent.AddReward(3.0f);//easy
             hasRequestedAction = false;
             Debug.Log("積み上げ成功");
 
             currentHighestPoint = CalculateTowerHeight(); // ピースドロップ後の高さ
 
+            if (currentHighestPoint >= heightRewardThreshold)
+            {
+                towerAgent.AddReward(5.0f); // 高さ更新の報酬
+                Debug.Log("一定の高さに達成したため報酬を与える");
+            }//easy
+
+            /*
             if (previousHighestPoint - currentPiece.transform.position.y >= 0)
             {
                 towerAgent.AddReward(1.0f); // 安定性の報酬
@@ -317,6 +325,7 @@ public class GameManager : MonoBehaviour
                 towerAgent.AddReward(15.0f); // 高さ更新の報酬(3)
                 Debug.Log("高さ更新の報酬を追加(3): 15.0f");
             }
+            *///hard
         }
         else
         {
