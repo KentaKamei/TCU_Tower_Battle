@@ -66,5 +66,9 @@ public class TitleManager : MonoBehaviour
         // フラグを更新して、二度と同じ処理が実行されないようにする
         ObjectsShown = true;
     }
+    public void SelectDifficulty(string difficulty)
+    {
+        GameManager.selectedDifficulty = difficulty; // 難易度を保存
+    }
 
 }

@@ -3197,6 +3197,7 @@ MonoBehaviour:
   stageGenerator: {fileID: 418725248}
   currentPieceRigidbody: {fileID: 0}
   currentPieceTransform: {fileID: 0}
+  behaviorParameters: {fileID: 0}
 --- !u!114 &1467794266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3210,7 +3211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 26
+    VectorObservationSize: 27
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -3219,9 +3220,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 0403d22640d81324b9f6936cc22bba99, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 1
-  m_BehaviorType: 2
+  m_BehaviorType: 0
   m_BehaviorName: TowerAgent
   TeamId: 0
   m_UseChildSensors: 1
@@ -4131,9 +4132,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -228213663
-  m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingLayerID: -51958483
+  m_SortingLayer: 1
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 9b5a14477bceab94a81f65a46fd3cf2a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

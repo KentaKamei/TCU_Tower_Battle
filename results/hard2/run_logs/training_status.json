@@ -1,0 +1,29 @@
+{
+    "TowerAgent": {
+        "checkpoints": [
+            {
+                "steps": 96873,
+                "file_path": "results\\hard2\\TowerAgent\\TowerAgent-96873.onnx",
+                "reward": 23.093247588424436,
+                "creation_time": 1732595232.1263092,
+                "auxillary_file_paths": [
+                    "results\\hard2\\TowerAgent\\TowerAgent-96873.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 96873,
+            "file_path": "results\\hard2\\TowerAgent.onnx",
+            "reward": 23.093247588424436,
+            "creation_time": 1732595232.1263092,
+            "auxillary_file_paths": [
+                "results\\hard2\\TowerAgent\\TowerAgent-96873.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.28.0",
+        "torch_version": "1.13.1+cu117"
+    }
+}

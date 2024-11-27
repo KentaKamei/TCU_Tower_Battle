@@ -1,6 +1,8 @@
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Policies;
+using Unity.Barracuda; // NNModel が定義されている名前空間
 using UnityEngine;
 
 public class TowerAgent : Agent
@@ -10,6 +12,44 @@ public class TowerAgent : Agent
     public StageGenerator stageGenerator;// stagegeneratorの参照
     public Rigidbody2D currentPieceRigidbody;
     public Transform currentPieceTransform; // Transformをキャッシュする変数
+    public BehaviorParameters behaviorParameters;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        behaviorParameters = GetComponent<BehaviorParameters>();
+
+        // 難易度に応じてモデルを設定
+        string difficulty = GameManager.selectedDifficulty;
+        Debug.Log("difficultyは" + difficulty + "です");
+
+        switch (difficulty)
+        {
+            case "easy":
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/easy");
+                behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
+                Debug.Log("easyモデルがセットされました");
+                break;
+            case "normal":
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/hard");
+                behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
+                Debug.Log("nomalモデルがセットされました");
+                break;
+            case "hard":
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/hard1");
+                behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
+                Debug.Log("hardモデルがセットされました");
+                break;
+            case "training":
+                behaviorParameters.Model = null;
+                behaviorParameters.BehaviorType = BehaviorType.Default;
+                Debug.Log("training中です");
+                break;
+        }
+
+        Debug.Log($"Loaded model for difficulty: {difficulty}");
+    }
 
 
     public override void OnEpisodeBegin()
@@ -38,25 +78,29 @@ public class TowerAgent : Agent
             return;
         }
         // 1. ピースの位置を観測
-        sensor.AddObservation(currentPiece.transform.position);
+        sensor.AddObservation(currentPiece.transform.position);//space size:3
 
         // 2. ピースの回転を観測
-        sensor.AddObservation(currentPiece.transform.rotation);
-        
+        sensor.AddObservation(currentPiece.transform.rotation);//space size:4
+
         // 3. ピースの種類
-        sensor.AddObservation((int)currentPiece.pieceType); 
+        sensor.AddObservation((int)currentPiece.pieceType); //space size:1
 
         // 4. 塔の外形情報（へこみや出っ張り）を観測
-        float[] surfaceShape = CalculateSurfaceShape();
+        float[] surfaceShape = CalculateSurfaceShape();//space size:15
         foreach (float height in surfaceShape)
         {
             sensor.AddObservation(height);
         }
 
-        // 5. ステージの範囲を観測 (minX, maxX, baseY)
+        // 5. ステージの範囲を観測 (minX, maxX, baseY)//space size:3
         sensor.AddObservation(stageGenerator.minX); // ステージの左端X座標
         sensor.AddObservation(stageGenerator.maxX); // ステージの右端X座標
         sensor.AddObservation(stageGenerator.baseY); // ステージの高さ
+
+        // 6. 現在の全ピース数を観測
+        int totalPieces = gameManager.allPieces.Count; // 全ピースの数を取得
+        sensor.AddObservation(totalPieces); // space size: 1
     }
 
     public override void OnActionReceived(ActionBuffers actions)

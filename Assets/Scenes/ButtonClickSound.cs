@@ -18,7 +18,7 @@ public class ButtonClickSound : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Buttonコンポーネントが見つかりません");
+            Debug.Log("Buttonコンポーネントが見つかりません");
         }
     }
 
