@@ -27,7 +27,7 @@ public class TowerAgent : Agent
         switch (difficulty)
         {
             case "easy":
-                behaviorParameters.Model = Resources.Load<NNModel>("Models/easy");
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/easy14");
                 behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
                 Debug.Log("easyモデルがセットされました");
                 break;
@@ -164,16 +164,19 @@ public class TowerAgent : Agent
         // 現在のピース位置を取得
         Vector3 newPosition = currentPiece.transform.position + new Vector3(moveX, 0, 0);
 
+        /*//hard
         // ステージの範囲を取得
         float leftBoundary = stageGenerator.minX;
         float rightBoundary = stageGenerator.maxX;
 
         // 新しい位置がステージの範囲内に収まるように制限
         newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
+        *///hard
 
         // ピースを新しい位置に移動
         currentPiece.transform.position = newPosition;
-    }    private void RotatePiece(float rotationZ)
+    }
+    private void RotatePiece(float rotationZ)
     {
         if (currentPieceTransform == null) return;
 
