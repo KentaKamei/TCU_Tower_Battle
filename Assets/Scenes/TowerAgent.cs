@@ -27,14 +27,14 @@ public class TowerAgent : Agent
         switch (difficulty)
         {
             case "easy":
-                behaviorParameters.Model = Resources.Load<NNModel>("Models/easy14");
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/easy");
                 behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
                 Debug.Log("easyモデルがセットされました");
                 break;
             case "normal":
-                behaviorParameters.Model = Resources.Load<NNModel>("Models/hard");
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/normal");
                 behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
-                Debug.Log("nomalモデルがセットされました");
+                Debug.Log("normalモデルがセットされました");
                 break;
             case "hard":
                 behaviorParameters.Model = Resources.Load<NNModel>("Models/hard1");
