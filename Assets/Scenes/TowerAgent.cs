@@ -37,7 +37,7 @@ public class TowerAgent : Agent
                 Debug.Log("normalモデルがセットされました");
                 break;
             case "hard":
-                behaviorParameters.Model = Resources.Load<NNModel>("Models/hard1");
+                behaviorParameters.Model = Resources.Load<NNModel>("Models/hard");
                 behaviorParameters.BehaviorType = BehaviorType.InferenceOnly;
                 Debug.Log("hardモデルがセットされました");
                 break;

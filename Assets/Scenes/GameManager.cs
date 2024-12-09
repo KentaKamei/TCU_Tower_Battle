@@ -243,7 +243,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
 
-            if (!isDragging && pressDuration <= dragThresholdTime) // 短時間クリックの場合
+            if (currentPiece != null && !isDragging && pressDuration <= dragThresholdTime) // 短時間クリックの場合
             {
                 currentPiece.DropPiece();
                 rotateButton.interactable = false;
@@ -309,7 +309,7 @@ public class GameManager : MonoBehaviour
 
             *///else
 
-            //nomal
+            /*//nomal
             clickedTimeCounter = 0.0f;
             towerAgent.AddReward(5.0f);
             hasRequestedAction = false;
@@ -322,22 +322,23 @@ public class GameManager : MonoBehaviour
                 Debug.Log("ピース数10");
             }
             //nomal
+            */
 
-            /*//hard
+            //hard
             clickedTimeCounter = 0.0f;
             towerAgent.AddReward(5.0f);//hard
             hasRequestedAction = false;
             Debug.Log("積み上げ成功");
             currentHighestPoint = CalculateTowerHeight(); // ピースドロップ後の高さ
 
-            if(allPieces.Count == 6)
+            if(allPieces.Count == 7)
             {
-                towerAgent.AddReward(3.0f);
-                Debug.Log("ピース数6");
+                towerAgent.AddReward(5.0f);
+                Debug.Log("ピース数7");
             }
             if(allPieces.Count == 10)
             {
-                towerAgent.AddReward(5.0f);
+                towerAgent.AddReward(7.0f);
                 Debug.Log("ピース数10");
             }
             if(allPieces.Count == 14)
@@ -349,25 +350,25 @@ public class GameManager : MonoBehaviour
             
             if (previousHighestPoint - currentPiece.transform.position.y >= 0)
             {
-                towerAgent.AddReward(1.0f); // 安定性の報酬
-                Debug.Log("安定性の報酬を追加: 1.0f");
+                towerAgent.AddReward(2.0f); // 安定性の報酬
+                Debug.Log("安定性の報酬を追加: 2.0f");
             }
             else if (previousHighestPoint - currentPiece.transform.position.y < 0 && currentHighestPoint >= heightRewardThreshold)
             {
-                towerAgent.AddReward(5.0f); // 高さ更新の報酬
+                towerAgent.AddReward(3.0f); // 高さ更新の報酬
                 Debug.Log("高さ更新の報酬を追加: 5.0f");
             }
             else if (previousHighestPoint - currentPiece.transform.position.y < 0 && currentHighestPoint >= heightRewardThreshold * 2)
             {
-                towerAgent.AddReward(10.0f); // 高さ更新の報酬(2)
+                towerAgent.AddReward(5.0f); // 高さ更新の報酬(2)
                 Debug.Log("高さ更新の報酬を追加(2): 10.0f");
             }
             else if (previousHighestPoint - currentPiece.transform.position.y < 0 && currentHighestPoint >= heightRewardThreshold * 3)
             {
-                towerAgent.AddReward(15.0f); // 高さ更新の報酬(3)
+                towerAgent.AddReward(10.0f); // 高さ更新の報酬(3)
                 Debug.Log("高さ更新の報酬を追加(3): 15.0f");
             }
-            *///hard
+            //hard
         }
         else
         {
@@ -511,7 +512,7 @@ public class GameManager : MonoBehaviour
             }
             *///easy
 
-            //nomal
+            /*//nomal
             if(allPieces.Count >= 7 && allPieces.Count < 10)
             {
                 towerAgent.AddReward(30.0f);
@@ -522,13 +523,13 @@ public class GameManager : MonoBehaviour
                 towerAgent.AddReward(-20.0f);
                 towerAgent.EndEpisode(); // エピソード終了
             }
-            //nomal
+            *///nomal
 
-            /*//hard
+            //hard
             float rewardForStackedPieces = allPieces.Count * 2.0f;
             towerAgent.AddReward(rewardForStackedPieces);
             Debug.Log("ピース数報酬: " + rewardForStackedPieces);
-            towerAgent.AddReward(-20.0f); // ペナルティ
+            towerAgent.AddReward(-30.0f); // ペナルティ
             Debug.Log("ペナルティ報酬");
             
             if(allPieces.Count <= 6)//hard
@@ -543,10 +544,10 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                towerAgent.AddReward(10.0f);//hard
+                towerAgent.AddReward(20.0f);//hard
                 towerAgent.EndEpisode(); // エピソード終了
             }
-            *///hard
+            //hard
 
         }
         
