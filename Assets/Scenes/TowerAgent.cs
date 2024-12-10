@@ -164,14 +164,14 @@ public class TowerAgent : Agent
         // 現在のピース位置を取得
         Vector3 newPosition = currentPiece.transform.position + new Vector3(moveX, 0, 0);
 
-        /*//hard
+        //easy
         // ステージの範囲を取得
-        float leftBoundary = stageGenerator.minX;
-        float rightBoundary = stageGenerator.maxX;
+        float leftBoundary = stageGenerator.minX + 0.2f;
+        float rightBoundary = stageGenerator.maxX - 0.2f;
 
         // 新しい位置がステージの範囲内に収まるように制限
         newPosition.x = Mathf.Clamp(newPosition.x, leftBoundary, rightBoundary);
-        *///hard
+        //easy
 
         // ピースを新しい位置に移動
         currentPiece.transform.position = newPosition;

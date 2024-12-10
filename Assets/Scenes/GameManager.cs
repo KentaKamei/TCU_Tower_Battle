@@ -293,8 +293,9 @@ public class GameManager : MonoBehaviour
         // ピースが固定されている場合（通常のトレーニング処理）
         if (currentPiece.IsStationary())
         {
-            /*
+            
             //easy
+            
             clickedTimeCounter = 0.0f;
             towerAgent.AddReward(3.0f);
             hasRequestedAction = false;
@@ -307,7 +308,8 @@ public class GameManager : MonoBehaviour
                 Debug.Log("ピース数10");
             }
 
-            *///else
+            
+            //easy
 
             /*//nomal
             clickedTimeCounter = 0.0f;
@@ -325,6 +327,7 @@ public class GameManager : MonoBehaviour
             */
 
             //hard
+            /*
             clickedTimeCounter = 0.0f;
             towerAgent.AddReward(5.0f);//hard
             hasRequestedAction = false;
@@ -368,6 +371,7 @@ public class GameManager : MonoBehaviour
                 towerAgent.AddReward(10.0f); // 高さ更新の報酬(3)
                 Debug.Log("高さ更新の報酬を追加(3): 15.0f");
             }
+            */
             //hard
         }
         else
@@ -498,7 +502,7 @@ public class GameManager : MonoBehaviour
 
         if (isTrainingMode && towerAgent != null)
         {
-            /*
+            
             //easy
             if(allPieces.Count >= 4 && allPieces.Count < 7)
             {
@@ -510,7 +514,7 @@ public class GameManager : MonoBehaviour
                 towerAgent.AddReward(-30.0f);
                 towerAgent.EndEpisode(); // エピソード終了
             }
-            *///easy
+            //easy
 
             /*//nomal
             if(allPieces.Count >= 7 && allPieces.Count < 10)
@@ -525,6 +529,7 @@ public class GameManager : MonoBehaviour
             }
             *///nomal
 
+            /*
             //hard
             float rewardForStackedPieces = allPieces.Count * 2.0f;
             towerAgent.AddReward(rewardForStackedPieces);
@@ -547,6 +552,7 @@ public class GameManager : MonoBehaviour
                 towerAgent.AddReward(20.0f);//hard
                 towerAgent.EndEpisode(); // エピソード終了
             }
+            */
             //hard
 
         }
